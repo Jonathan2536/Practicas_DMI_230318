@@ -25,8 +25,11 @@ Este repositorio contendrá los resultados de las prácticas de la materia para 
  
 ---
 
+
 ### Diagrama de Arquitectura
 
-[![Arquitectura real de la aplicación contador Flutter](Architecture/counter-application-architecture.visual-check.2048x1320.dark.png)](Architecture/counter-application-architecture.html)
+[![Arquitectura real de la aplicación contador Flutter](Architecture/counter-application-architecture.visual-check.2048x1320.dark.png)](https://jonathan2536.github.io/Practicas_DMI_230318/)
 
 > Haz clic en el diagrama para abrir la versión interactiva con vistas guiadas, cambio de tema y exportación.
+
+Git hub pages: https://jonathan2536.github.io/Practicas_DMI_230318/
