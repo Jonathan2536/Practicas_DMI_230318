@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Arquitectura real: contador Flutter",
+    "quality_profile": "showcase",
+    "viewBox": [1380, 800],
+    "repository": {
+      "url": "https://github.com/Jonathan2536/Practicas_DMI_230318",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "9d05460923e28167ce1cdb299d5cc138dfd97281"
+    },
+    "views": [
+      {
+        "id": "startup",
+        "label": "Inicio y dependencias",
+        "focus": ["pubspec", "google-fonts", "main", "my-app", "counter-screen"],
+        "note": "main.dart inicia MyApp; MaterialApp abre CounterFunctionsScreen y la fuente llega desde la dependencia google_fonts."
+      },
+      {
+        "id": "state-flow",
+        "label": "Estado y reconstrucción",
+        "focus": ["counter-screen", "state", "controls", "set-state", "scaffold"],
+        "note": "Las acciones modifican clickCounter y setState() vuelve a ejecutar build()."
+      },
+      {
+        "id": "rendering",
+        "label": "Renderizado condicional",
+        "focus": ["scaffold", "counter-text", "controls", "state"],
+        "note": "Scaffold muestra los controles y el número; el color depende del signo del contador."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "pubspec",
+      "type": "external",
+      "label": "pubspec.yaml",
+      "sublabel": "google_fonts: ^8.2.1",
+      "pos": [50, 120],
+      "size": [190, 72],
+      "tag": "Dependencias",
+      "sources": [{ "path": "flutter_application_230318/pubspec.yaml", "label": "google_fonts" }]
+    },
+    {
+      "id": "google-fonts",
+      "type": "external",
+      "label": "GoogleFonts.openSans",
+      "sublabel": "Fuente del número y texto",
+      "pos": [340, 100],
+      "size": [200, 72],
+      "tag": "Tipografía",
+      "sources": [{ "path": "flutter_application_230318/lib/presentation/screens/counter/counter_functions_screen.dart", "label": "GoogleFonts.openSans" }]
+    },
+    {
+      "id": "main",
+      "type": "frontend",
+      "label": "main()",
+      "sublabel": "runApp(MyApp())",
+      "pos": [70, 320],
+      "size": [170, 72],
+      "tag": "Punto de entrada",
+      "sources": [{ "path": "flutter_application_230318/lib/main.dart", "line": 5, "label": "main" }]
+    },
+    {
+      "id": "my-app",
+      "type": "frontend",
+      "label": "MyApp",
+      "sublabel": "MaterialApp · theme brown",
+      "pos": [300, 320],
+      "size": [190, 72],
+      "tag": "StatelessWidget",
+      "sources": [{ "path": "flutter_application_230318/lib/main.dart", "line": 9, "label": "MyApp" }]
+    },
+    {
+      "id": "counter-screen",
+      "type": "frontend",
+      "label": "CounterFunctionsScreen",
+      "sublabel": "home de MaterialApp",
+      "pos": [530, 320],
+      "size": [220, 72],
+      "tag": "StatefulWidget",
+      "sources": [{ "path": "flutter_application_230318/lib/presentation/screens/counter/counter_functions_screen.dart", "line": 5, "label": "Widget activo" }]
+    },
+    {
+      "id": "state",
+      "type": "backend",
+      "label": "_CounterFunctionsScreenState",
+      "sublabel": "clickCounter: int · click: String",
+      "pos": [780, 320],
+      "size": [255, 72],
+      "tag": "Estado local",
+      "sources": [{ "path": "flutter_application_230318/lib/presentation/screens/counter/counter_functions_screen.dart", "line": 13, "label": "Estado" }]
+    },
+    {
+      "id": "scaffold",
+      "type": "frontend",
+      "label": "Scaffold",
+      "sublabel": "AppBar · body · floatingActionButton",
+      "pos": [1090, 320],
+      "size": [240, 72],
+      "tag": "Interfaz",
+      "sources": [{ "path": "flutter_application_230318/lib/presentation/screens/counter/counter_functions_screen.dart", "line": 32, "label": "Scaffold" }]
+    },
+    {
+      "id": "controls",
+      "type": "frontend",
+      "label": "CustomButton × 3",
+      "sublabel": "reset · −1 · +1",
+      "pos": [1090, 650],
+      "size": [190, 72],
+      "tag": "FloatingActionButton",
+      "sources": [{ "path": "flutter_application_230318/lib/presentation/screens/counter/counter_functions_screen.dart", "line": 70, "label": "CustomButton" }]
+    },
+    {
+      "id": "set-state",
+      "type": "backend",
+      "label": "setState()",
+      "sublabel": "solicita nueva ejecución de build()",
+      "pos": [797, 650],
+      "size": [220, 72],
+      "tag": "Actualización de estado",
+      "sources": [{ "path": "flutter_application_230318/lib/presentation/screens/counter/counter_functions_screen.dart", "line": 75, "label": "setState" }]
+    },
+    {
+      "id": "counter-text",
+      "type": "frontend",
+      "label": "Text('$clickCounter')",
+      "sublabel": ">0 verde · <0 rojo · =0 azul",
+      "pos": [1090, 510],
+      "size": [190, 72],
+      "tag": "GoogleFonts.openSans · 160",
+      "sources": [{ "path": "flutter_application_230318/lib/presentation/screens/counter/counter_functions_screen.dart", "line": 24, "label": "Color y texto" }]
+    }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "lib/main.dart", "wraps": ["main", "my-app"], "pad": 36 },
+    { "kind": "region", "label": "counter_functions_screen.dart", "wraps": ["counter-screen", "state", "scaffold", "controls", "set-state", "counter-text"], "pad": 38 }
+  ],
+  "connections": [
+    { "id": "font-dependency", "from": "pubspec", "to": "google-fonts", "label": "declara google_fonts", "variant": "dashed", "labelAt": [290, 215] },
+    { "id": "font-use", "from": "google-fonts", "to": "counter-text", "label": "aplica GoogleFonts.openSans", "variant": "dashed", "fromSide": "right", "toSide": "right", "via": [[620, 136], [1340, 136], [1340, 546]] },
+    { "id": "run-app", "from": "main", "to": "my-app", "variant": "emphasis" },
+    { "id": "home-screen", "from": "my-app", "to": "counter-screen", "variant": "emphasis" },
+    { "id": "create-state", "from": "counter-screen", "to": "state", "variant": "emphasis" },
+    { "id": "build-scaffold", "from": "state", "to": "scaffold", "variant": "emphasis" },
+    { "id": "button-actions", "from": "controls", "to": "set-state", "variant": "emphasis" },
+    { "id": "state-update", "from": "set-state", "to": "state", "variant": "emphasis", "fromSide": "top", "toSide": "bottom" },
+    { "id": "render-number", "from": "state", "to": "counter-text", "variant": "emphasis" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Inicio", "items": ["main() invoca runApp(MyApp()).", "MyApp usa CounterFunctionsScreen como home."] },
+    { "dot": "violet", "title": "Fuente", "items": ["El código real usa GoogleFonts.openSans mediante google_fonts ^8.2.1.", "No se encontró una fuente o dependencia llamada Architext en pubspec.yaml."] },
+    { "dot": "emerald", "title": "Renderizado", "items": ["setState() reconstruye la pantalla tras reset, decremento o incremento.", "El valor es verde si >0, rojo si <0 y azul si =0."] }
+  ]
+}
