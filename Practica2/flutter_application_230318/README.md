@@ -62,5 +62,17 @@ Cuando el acumulado supera el cero, el número conmuta automáticamente a color 
 
 ---
 
+### Diagrama de Arquitectura
+
+[![Arquitectura real de la aplicación contador Flutter](Architecture/counter-application-architecture.visual-check.2048x1320.dark.png)](https://jonathan2536.github.io/Practicas_DMI_230318/)
+
+> Haz clic en el diagrama para abrir la versión interactiva con vistas guiadas, cambio de tema y exportación.
+
+Git hub pages: https://jonathan2536.github.io/Practicas_DMI_230318/
+
+
+---
+
+
 ## Resultado
 El proyecto cumple satisfactoriamente con los requerimientos asignados: el contador responde de forma precisa a las interacciones del usuario y adapta de manera fluida su aspecto gráfico (colores y tipografía) en función de su valor actual.
