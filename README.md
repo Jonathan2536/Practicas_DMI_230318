@@ -21,15 +21,8 @@ Este repositorio contendrá los resultados de las prácticas de la materia para 
 | No. | Nombre | Descripción | Ponderación | Estatus |
 | :---: | :--- | :--- | :---: | :---: |
 | 1 | Metodología de Evaluación de la Materia | Transcribir en libreta y comprender la metodología y fechas de evaluación de la asignatura | 5 | 🟢 Concluida |
-| 2 | Mi Primer Aplicación Móvil con Flutter | Codificar la app móvil en el framework de Flutter manejando Stateless y Stateful Widgets | 25 | 🟢 Concluida |
+| 2 | [Mi Primer Aplicación Móvil con Flutter](https://github.com/Jonathan2536/Practicas_DMI_230318/tree/main/Practica2/flutter_application_230318) | Codificar la app móvil en el framework de Flutter manejando Stateless y Stateful Widgets | 25 | 🟢 Concluida |
+
  
 ---
 
-
-### Diagrama de Arquitectura
-
-[![Arquitectura real de la aplicación contador Flutter](Practica2/Architecture/counter-application-architecture.visual-check.2048x1320.dark.png)](https://jonathan2536.github.io/Practicas_DMI_230318/)
-
-> Haz clic en el diagrama para abrir la versión interactiva con vistas guiadas, cambio de tema y exportación.
-
-Git hub pages: https://jonathan2536.github.io/Practicas_DMI_230318/
