@@ -25,12 +25,23 @@ class YesNoDatasourceImpl implements YesNoDatasource {
       'maybe' => 'Tal vez',
       _ => throw const FormatException('La respuesta recibida no es válida.'),
     };
-    final imageUrl = data['image'];
+    final imageValue = data['image'];
+    if (imageValue is! String) {
+      throw const FormatException('La API no devolvió un GIF.');
+    }
+
+    final imageUri = Uri.tryParse(imageValue);
+    if (imageUri == null ||
+        imageUri.scheme != 'https' ||
+        imageUri.host != 'yesno.wtf' ||
+        !imageUri.path.toLowerCase().endsWith('.gif')) {
+      throw const FormatException('El GIF recibido de la API no es válido.');
+    }
 
     return Message(
       text: answer,
       fromWho: FromWho.hers,
-      imageUrl: imageUrl is String ? imageUrl : null,
+      imageUrl: imageUri.toString(),
     );
   }
 }
