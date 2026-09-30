@@ -34,13 +34,13 @@
 ![Chat y hora](/Practica3/flutter_yes_no_app_230318/src/Hora.png)
 
 ### Respuesta "Sí" con GIF
-![Respuesta Sí](/Practica3/flutter_yes_no_app_230318/src/Hora.png)
+![Respuesta Sí](/Practica3/flutter_yes_no_app_230318/src/si.png)
 
 ### Respuesta "No" con GIF
 ![Respuesta No](/Practica3/flutter_yes_no_app_230318/src/No.png)
 
 ### Respuesta "Tal vez" con GIF
-![Respuesta Tal vez](ruta/a/tu/imagen_respuesta_tal_vez.png)
+![Respuesta Tal vez](/Practica3/flutter_yes_no_app_230318/src/talvez.png)
 
 ---
 
