@@ -1,0 +1,646 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "PRÁCTICA 03 / DOCUMENTACIÓN INTERACTIVA",
+    "subtitle": "Yes No App · Arquitectura · Codigo real · Practica03/yes_no_app · referencia Practica03 · Flutter + Dart · Archify",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/Jonathan2536/Practicas_DMI_230318",
+      "provider": "github",
+      "revision": "638c66f2115ec719ba4283aa77c1e0cd9b7c454a"
+    },
+    "viewBox": [
+      1250,
+      650
+    ],
+    "legend": {
+      "mode": "all",
+      "entries": {
+        "frontend": {
+          "label": "Componente"
+        },
+        "backend": {
+          "label": "Archivo / lógica"
+        },
+        "database": {
+          "label": "Estado / datos"
+        },
+        "cloud": {
+          "label": "Plataforma"
+        },
+        "external": {
+          "label": "Servicio externo"
+        }
+      }
+    }
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [
+      40,
+      48
+    ],
+    "cols": 6,
+    "cellW": 180,
+    "cellH": 92,
+    "gapX": 25,
+    "gapY": 10
+  },
+  "components": [
+    {
+      "id": "entry",
+      "type": "frontend",
+      "label": "Flutter · MyApp",
+      "sublabel": "main() → Provider → MaterialApp",
+      "tag": "Componente",
+      "row": 1,
+      "col": 0,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/main.dart",
+          "label": "arranque y DI"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "field",
+      "type": "frontend",
+      "label": "MessageFieldBox",
+      "sublabel": "trim() → onSend(text)",
+      "tag": "Componente",
+      "row": 1,
+      "col": 1,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/presentation/widgets/shared/message_field_box.dart"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "chat",
+      "type": "frontend",
+      "label": "ChatScreen · _ChatView",
+      "sublabel": "ListView · escucha estado",
+      "tag": "Componente",
+      "row": 1,
+      "col": 2,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/presentation/screens/chat/chat_screen.dart"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "provider",
+      "type": "backend",
+      "label": "ChatProvider",
+      "sublabel": "estado · notify · scroll",
+      "tag": "Archivo / lógica",
+      "row": 1,
+      "col": 3,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/presentation/providers/chat_provider.dart"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "message",
+      "type": "database",
+      "label": "Message",
+      "sublabel": "text · imageUrl? · sender",
+      "tag": "Estado / datos",
+      "row": 2,
+      "col": 4,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/domain/entities/message.dart"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "bubbles",
+      "type": "frontend",
+      "label": "Burbujas del chat",
+      "sublabel": "Burbujas · GIF?",
+      "tag": "Componente",
+      "row": 2,
+      "col": 3,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/presentation/widgets/chat/my_message_bubble.dart"
+        },
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/presentation/widgets/chat/her_message_bubble.dart"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "probability",
+      "type": "backend",
+      "label": "GetYesNoAnswer",
+      "sublabel": "40/40/20 · Sí/No/Tal vez",
+      "tag": "Archivo / lógica",
+      "row": 1,
+      "col": 4,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/domain/usecases/get_yes_no_answer.dart"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "repository",
+      "type": "backend",
+      "label": "Repositorio YesNo",
+      "sublabel": "Contrato → datasource",
+      "tag": "Archivo / lógica",
+      "row": 1,
+      "col": 5,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/domain/repositories/yes_no_repository.dart"
+        },
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/infrastructure/repositories/yes_no_repository_impl.dart"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "datasource",
+      "type": "backend",
+      "label": "Datasource · Dio",
+      "sublabel": "GET /api → Message",
+      "tag": "Archivo / lógica",
+      "row": 2,
+      "col": 5,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/infrastructure/datasources/yes_no_datasource_impl.dart"
+        },
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/domain/datasources/yes_no_datasource.dart"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "api",
+      "type": "external",
+      "label": "yesno.wtf/api",
+      "sublabel": "HTTPS · answer + GIF",
+      "tag": "Servicio externo",
+      "row": 4,
+      "col": 1,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/main.dart",
+          "label": "base URL"
+        },
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/infrastructure/datasources/yes_no_datasource_impl.dart",
+          "label": "ruta /api"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "images",
+      "type": "external",
+      "label": "Imágenes remotas",
+      "sublabel": "Image.network · GIF remoto",
+      "tag": "Servicio externo",
+      "row": 2,
+      "col": 2,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/presentation/widgets/chat/her_message_bubble.dart"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "status",
+      "type": "database",
+      "label": "Hora del mensaje",
+      "sublabel": "sentAt → HH:mm (formato local)",
+      "tag": "Estado / datos",
+      "row": 2,
+      "col": 1,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/domain/entities/message.dart"
+        },
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/presentation/widgets/chat/her_message_bubble.dart"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "theme",
+      "type": "backend",
+      "label": "AppTheme",
+      "sublabel": "Material 3 · azul",
+      "tag": "Archivo / configuración",
+      "row": 2,
+      "col": 0,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/config/theme/app_theme.dart"
+        },
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/main.dart"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "resources",
+      "type": "backend",
+      "label": "Dependencias y recursos",
+      "sublabel": "pubspec · deps · icono",
+      "tag": "Archivo / recursos",
+      "row": 3,
+      "col": 4,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/pubspec.yaml"
+        },
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/src/spiterman.jpg"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "android",
+      "type": "cloud",
+      "label": "Android",
+      "sublabel": "FlutterActivity · Kotlin",
+      "tag": "Plataforma",
+      "row": 0,
+      "col": 0,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/android/app/src/main/kotlin/com/example/flutter_yes_no_app_230318/MainActivity.kt"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "ios",
+      "type": "cloud",
+      "label": "iOS",
+      "sublabel": "FlutterAppDelegate · Swift",
+      "tag": "Plataforma",
+      "row": 0,
+      "col": 1,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/ios/Runner/AppDelegate.swift"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "web",
+      "type": "cloud",
+      "label": "Web",
+      "sublabel": "HTML · manifiesto",
+      "tag": "Plataforma",
+      "row": 0,
+      "col": 2,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/web/index.html"
+        },
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/web/manifest.json"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "windows",
+      "type": "cloud",
+      "label": "Windows",
+      "sublabel": "Ventana nativa · C++",
+      "tag": "Plataforma",
+      "row": 0,
+      "col": 3,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/windows/runner/main.cpp"
+        },
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/windows/runner/flutter_window.cpp"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "linux",
+      "type": "cloud",
+      "label": "Linux",
+      "sublabel": "GTK · C++",
+      "tag": "Plataforma",
+      "row": 0,
+      "col": 4,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/linux/runner/main.cc"
+        },
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/linux/runner/my_application.cc"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "macos",
+      "type": "cloud",
+      "label": "macOS",
+      "sublabel": "FlutterMacOS · Swift",
+      "tag": "Plataforma",
+      "row": 0,
+      "col": 5,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/macos/Runner/AppDelegate.swift"
+        },
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/macos/Runner/MainFlutterWindow.swift"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "tests",
+      "type": "backend",
+      "label": "Pruebas y observaciones",
+      "sublabel": "Tests: probabilidad · chat",
+      "tag": "Pruebas",
+      "row": 3,
+      "col": 5,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/test/widget_test.dart"
+        },
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/README.md"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "git",
+      "type": "backend",
+      "label": "Git",
+      "sublabel": "Control de versiones",
+      "tag": "Desarrollo y documentación",
+      "row": 3,
+      "col": 0,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/.gitignore"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "github",
+      "type": "external",
+      "label": "GitHub",
+      "sublabel": "Alojamiento",
+      "tag": "Desarrollo y documentación",
+      "row": 3,
+      "col": 1,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/README.md"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "pages",
+      "type": "external",
+      "label": "GitHub Pages",
+      "sublabel": "Publicación HTML · Pages",
+      "tag": "Desarrollo y documentación",
+      "row": 3,
+      "col": 2,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/README.md"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "archify",
+      "type": "backend",
+      "label": "Archify",
+      "sublabel": "JSON → diagrama HTML",
+      "tag": "Desarrollo y documentación",
+      "row": 3,
+      "col": 3,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/README.md",
+          "label": "documentación"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    },
+    {
+      "id": "ticks",
+      "type": "database",
+      "label": "Estados y palomitas",
+      "sublabel": "README: estados simulados",
+      "tag": "Observación",
+      "row": 4,
+      "col": 0,
+      "sources": [
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/README.md"
+        },
+        {
+          "path": "Practica3/flutter_yes_no_app_230318/lib/presentation/widgets/chat/my_message_bubble.dart"
+        }
+      ],
+      "size": [
+        174,
+        76
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "field",
+      "to": "chat",
+      "variant": "dashed"
+    },
+    {
+      "from": "chat",
+      "to": "provider"
+    },
+    {
+      "from": "provider",
+      "to": "probability",
+      "variant": "dashed"
+    },
+    {
+      "from": "probability",
+      "to": "repository"
+    },
+    {
+      "from": "repository",
+      "to": "datasource"
+    },
+    {
+      "from": "datasource",
+      "to": "api",
+      "variant": "dashed"
+    },
+    {
+      "from": "api",
+      "to": "message",
+      "variant": "dashed"
+    },
+    {
+      "from": "message",
+      "to": "bubbles"
+    },
+    {
+      "from": "images",
+      "to": "bubbles",
+      "variant": "dashed"
+    },
+    {
+      "from": "git",
+      "to": "github",
+      "width": 0.7
+    },
+    {
+      "from": "github",
+      "to": "pages",
+      "width": 0.7
+    },
+    {
+      "from": "pages",
+      "to": "archify",
+      "width": 0.7
+    },
+    {
+      "from": "datasource",
+      "to": "api",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "amber",
+      "title": "Lectura del código",
+      "items": [
+        "La probabilidad se implementa localmente en GetYesNoAnswer; la API recibe force y devuelve answer + image.",
+        "El modelo real usa sentAt; la hora HH:mm se formatea en las burbujas.",
+        "El README menciona palomitas simuladas, pero el código de burbujas no implementa esos estados ni temporizadores."
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Publicación y pruebas",
+      "items": [
+        "README documenta GitHub Pages, pero conserva un enlace de ejemplo tu-usuario/tu-repositorio.",
+        "test/widget_test.dart comprueba opciones ponderadas y envío con/sin signo ?.",
+        "El índice de color real es 1: azul; AppTheme tiene índ. 0 morado personalizado."
+      ]
+    }
+  ]
+}

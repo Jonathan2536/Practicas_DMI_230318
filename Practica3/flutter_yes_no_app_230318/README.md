@@ -62,7 +62,9 @@
 
 Puedes explorar la arquitectura y el flujo de componentes de la **Práctica 03** a través del siguiente enlace:
 
-👉 [Ver la arquitectura interactiva en GitHub Pages](https://tu-usuario.github.io/tu-repositorio)
+[![Diagrama de arquitectura de Yes No App](Arquitectura/arquitectura-yes-no-app.visual-check.1440x900.light.png)](Arquitectura/arquitectura-yes-no-app.html)
+
+[Abrir el archivo HTML del diagrama interactivo](Arquitectura/arquitectura-yes-no-app.html). Para explorar sus interacciones, abre ese archivo en un navegador.
 
 El diagrama explica detalladamente el flujo del chat, la jerarquía de widgets/componentes y el soporte multi-plataforma (Android, iOS, Web, Windows, Linux y macOS). Al hacer clic en un bloque, podrás consultar su descripción y acceder directamente al archivo fuente correspondiente en este repositorio.
 
