@@ -22,6 +22,7 @@ Este repositorio contendrá los resultados de las prácticas de la materia para 
 | :---: | :--- | :--- | :---: | :---: |
 | 1 | Metodología de Evaluación de la Materia | Transcribir en libreta y comprender la metodología y fechas de evaluación de la asignatura | 5 | 🟢 Concluida |
 | 2 | [Mi Primer Aplicación Móvil con Flutter](https://github.com/Jonathan2536/Practicas_DMI_230318/tree/main/Practica2/flutter_application_230318) | Codificar la app móvil en el framework de Flutter manejando Stateless y Stateful Widgets | 25 | 🟢 Concluida |
+| 3 | [Practica yes_no_app](https://github.com/Jonathan2536/Practicas_DMI_230318/tree/main/Practica3/flutter_yes_no_app_230318) | Un chat con respuestas automaticas por medio del API | 30 | 🟢 Concluida |
 
  
 ---

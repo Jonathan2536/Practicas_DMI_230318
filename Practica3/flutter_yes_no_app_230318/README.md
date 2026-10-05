@@ -60,12 +60,11 @@
 
 ## Arquitectura interactiva
 
-Puedes explorar la arquitectura y el flujo de componentes de la **Práctica 03** a través del siguiente enlace:
+Puedes explorar la arquitectura y el flujo de componentes de la **Práctica 03** publicada en GitHub Pages:
 
-[![Diagrama de arquitectura de Yes No App](Arquitectura/arquitectura-yes-no-app.visual-check.1440x900.light.png)](Arquitectura/arquitectura-yes-no-app.html)
+[![Diagrama de arquitectura de Yes No App](Arquitectura/arquitectura-yes-no-app.visual-check.1440x900.light.png)](https://jonathan2536.github.io/Practicas_DMI_230318/Practica3/flutter_yes_no_app_230318/Arquitectura/arquitectura-yes-no-app.html)
 
-[Abrir el archivo HTML del diagrama interactivo](Arquitectura/arquitectura-yes-no-app.html). Para explorar sus interacciones, abre ese archivo en un navegador.
+[Abrir el diagrama interactivo en GitHub Pages](https://jonathan2536.github.io/Practicas_DMI_230318/Practica3/flutter_yes_no_app_230318/Arquitectura/arquitectura-yes-no-app.html)
 
 El diagrama explica detalladamente el flujo del chat, la jerarquía de widgets/componentes y el soporte multi-plataforma (Android, iOS, Web, Windows, Linux y macOS). Al hacer clic en un bloque, podrás consultar su descripción y acceder directamente al archivo fuente correspondiente en este repositorio.
 
-> **Nota:** También puedes abrir directamente el archivo HTML de la arquitectura que se encuentra en la carpeta del proyecto haciendo doble clic en él desde tu navegador preferido, sin necesidad de ejecutar el entorno de Flutter.
