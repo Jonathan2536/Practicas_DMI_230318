@@ -1,4 +1,4 @@
-import 'package:tistos/domain/entities/video_post.dart';
+import 'package:practica4/domain/entities/video_post.dart';
 
 class LocalVideoModel {
   final String name;

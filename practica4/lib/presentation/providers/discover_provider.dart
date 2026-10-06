@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tistos/domain/entities/video_post.dart';
-import 'package:tistos/infrastructure/models/local_video_model.dart';
+import 'package:practica4/domain/entities/video_post.dart';
+import 'package:practica4/infrastructure/models/local_video_model.dart';
 
-import 'package:tistos/shared/data/local_video_post.dart';
+import 'package:practica4/shared/data/local_video_post.dart';
 
 
 

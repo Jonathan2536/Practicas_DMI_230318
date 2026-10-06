@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tistos/domain/entities/video_post.dart';
-import 'package:tistos/presentation/widgets/video/fullscreen_player.dart';
+import 'package:practica4/domain/entities/video_post.dart';
+import 'package:practica4/presentation/widgets/video/fullscreen_player.dart';
 
 class VideoScrollableView extends StatefulWidget {
   

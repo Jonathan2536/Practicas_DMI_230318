@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:tistos/domain/entities/video_post.dart';
-import 'package:tistos/presentation/widgets/shared/video_buttons.dart';
-import 'package:tistos/presentation/widgets/video/video_background.dart';
-import 'package:video_player/video_player.dart';
+import 'package:practica4/domain/entities/video_post.dart';
+import 'package:practica4/presentation/widgets/shared/video_buttons.dart';
+import 'package:practica4/presentation/widgets/video/video_background.dart';
 
 class FullScreenPlayer extends StatefulWidget {
   final VideoPost videoPost;
@@ -98,7 +97,7 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
                     child: Icon(
                       Icons.play_arrow,
                       size: 80,
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withValues(alpha: 0.5),
                     ),
                   ),
 
@@ -131,7 +130,7 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
 class _VideoCaption extends StatelessWidget {
   final String caption;
 
-  const _VideoCaption({super.key, required this.caption});
+  const _VideoCaption({required this.caption});
 
   @override
   Widget build(BuildContext context) {

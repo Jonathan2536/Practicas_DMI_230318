@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tistos/config/theme/app_theme.dart';
-import 'package:tistos/presentation/providers/discover_provider.dart';
-import 'package:tistos/presentation/screens/discover/discover_screen.dart';
+import 'package:practica4/config/theme/app_theme.dart';
+import 'package:practica4/presentation/providers/discover_provider.dart';
+import 'package:practica4/presentation/screens/discover/discover_screen.dart';
 
 void main() => runApp(const MyApp());
 
