@@ -10,6 +10,8 @@ class VideoButtons extends StatelessWidget {
   final VoidCallback onToggleMute;
   final bool isLikeUpdatePending;
   final VoidCallback onToggleLike;
+  final bool isFavoriteUpdatePending;
+  final VoidCallback onToggleFavorite;
 
   const VideoButtons({
     super.key, 
@@ -18,6 +20,8 @@ class VideoButtons extends StatelessWidget {
     required this.onToggleMute,
     required this.isLikeUpdatePending,
     required this.onToggleLike,
+    required this.isFavoriteUpdatePending,
+    required this.onToggleFavorite,
   });
 
   @override
@@ -29,6 +33,16 @@ class VideoButtons extends StatelessWidget {
           iconColor: Colors.red,
           iconData: video.isLiked ? Icons.favorite : Icons.favorite_border,
           onPressed: isLikeUpdatePending ? null : onToggleLike,
+        ),
+        const SizedBox( height: 20 ),
+        IconButton(
+          tooltip: video.isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos',
+          onPressed: isFavoriteUpdatePending ? null : onToggleFavorite,
+          icon: Icon(
+            video.isFavorite ? Icons.bookmark : Icons.bookmark_border,
+            color: video.isFavorite ? Colors.amber : Colors.white,
+            size: 30,
+          ),
         ),
         const SizedBox( height: 20 ),
         _CustomIconButton( value: video.views, iconData: Icons.remove_red_eye_outlined ),

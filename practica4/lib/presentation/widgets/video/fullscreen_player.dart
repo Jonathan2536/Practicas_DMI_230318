@@ -29,7 +29,9 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
   void initState() {
     super.initState();
 
-    controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoPost.videoUrl));
+    controller = VideoPlayerController.networkUrl(
+      Uri.parse(widget.videoPost.videoUrl),
+    );
     _initializeFuture = controller.initialize().then((_) {
       controller.setVolume(isMuted ? 0 : 1);
       controller.setLooping(true);
@@ -117,9 +119,13 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
                       widget.videoPost.id,
                     ),
                     onToggleLike: () => _toggleLike(context, discoverProvider),
+                    isFavoriteUpdatePending: discoverProvider
+                        .isFavoriteUpdatePending(widget.videoPost.id),
+                    onToggleFavorite: () =>
+                        _toggleFavorite(context, discoverProvider),
                   ),
                 ),
-                
+
                 // Texto
                 Positioned(
                   bottom: 50,
@@ -144,6 +150,20 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('No se pudo guardar el like: $error')),
+      );
+    }
+  }
+
+  Future<void> _toggleFavorite(
+    BuildContext context,
+    DiscoverProvider discoverProvider,
+  ) async {
+    try {
+      await discoverProvider.toggleFavorite(widget.videoPost.id);
+    } catch (error) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No se pudo guardar el favorito: $error')),
       );
     }
   }

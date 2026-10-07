@@ -90,4 +90,62 @@ void main() {
       expect(restoredVideo.likes, video.likes + 1);
     },
   );
+
+  test('toggles favorites independently from likes', () async {
+    final provider = DiscoverProvider(storage);
+    await provider.loadNextPage();
+
+    final video = provider.videos.first;
+    final initialLikes = video.likes;
+
+    await provider.toggleFavorite(video.id);
+
+    var updatedVideo = provider.videos.first;
+    expect(updatedVideo.isFavorite, isTrue);
+    expect(updatedVideo.isLiked, isFalse);
+    expect(updatedVideo.likes, initialLikes);
+
+    await provider.toggleLike(video.id);
+
+    updatedVideo = provider.videos.first;
+    expect(updatedVideo.isFavorite, isTrue);
+    expect(updatedVideo.isLiked, isTrue);
+    expect(updatedVideo.likes, initialLikes + 1);
+
+    await provider.toggleFavorite(video.id);
+
+    updatedVideo = provider.videos.first;
+    expect(updatedVideo.isFavorite, isFalse);
+    expect(updatedVideo.isLiked, isTrue);
+    expect(updatedVideo.likes, initialLikes + 1);
+  });
+
+  test('restores favorite state after provider recreation', () async {
+    final provider = DiscoverProvider(storage);
+    await provider.loadNextPage();
+    final video = provider.videos.first;
+    await provider.toggleFavorite(video.id);
+
+    final restartedProvider = DiscoverProvider(storage);
+    await restartedProvider.loadNextPage();
+
+    final restoredVideo = restartedProvider.videos.first;
+    expect(restoredVideo.id, video.id);
+    expect(restoredVideo.isFavorite, isTrue);
+    expect(restoredVideo.isLiked, isFalse);
+    expect(restoredVideo.likes, video.likes);
+  });
+
+  test('ignores duplicate favorite toggles while persistence is pending', () async {
+    final provider = DiscoverProvider(storage);
+    await provider.loadNextPage();
+    final video = provider.videos.first;
+
+    final firstToggle = provider.toggleFavorite(video.id);
+    final secondToggle = provider.toggleFavorite(video.id);
+    await Future.wait([firstToggle, secondToggle]);
+
+    expect(provider.videos.first.isFavorite, isTrue);
+    expect(await storage.getBool('video_favorite_${video.id}'), isTrue);
+  });
 }

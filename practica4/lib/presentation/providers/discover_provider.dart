@@ -12,6 +12,7 @@ class DiscoverProvider extends ChangeNotifier {
 
   final LocalStorageService _storage;
   final Set<String> _pendingLikeUpdates = {};
+  final Set<String> _pendingFavoriteUpdates = {};
 
   bool initialLoading = true;
   List<VideoPost> videos = [];
@@ -20,7 +21,12 @@ class DiscoverProvider extends ChangeNotifier {
     final newVideos = videoPosts
         .map((video) => LocalVideoModel.fromJson(video).toVideoPostEntity())
         .toList();
-    videos = await Future.wait(newVideos.map(_restoreLikeState));
+    videos = await Future.wait(
+      newVideos.map((video) async {
+        final videoWithLike = await _restoreLikeState(video);
+        return _restoreFavoriteState(videoWithLike);
+      }),
+    );
     initialLoading = false;
     notifyListeners();
   }
@@ -64,6 +70,38 @@ class DiscoverProvider extends ChangeNotifier {
     }
   }
 
+  bool isFavoriteUpdatePending(String videoId) =>
+      _pendingFavoriteUpdates.contains(videoId);
+
+  Future<void> toggleFavorite(String videoId) async {
+    if (_pendingFavoriteUpdates.contains(videoId)) return;
+
+    final videoIndex = videos.indexWhere((video) => video.id == videoId);
+    if (videoIndex == -1) {
+      throw ArgumentError.value(videoId, 'videoId', 'Video was not found.');
+    }
+
+    final currentVideo = videos[videoIndex];
+    final updatedVideo = currentVideo.copyWith(
+      isFavorite: !currentVideo.isFavorite,
+    );
+
+    _pendingFavoriteUpdates.add(videoId);
+    videos[videoIndex] = updatedVideo;
+    notifyListeners();
+
+    try {
+      await _storage.setBool(_favoriteStorageKey(videoId), updatedVideo.isFavorite);
+    } catch (_) {
+      videos[videoIndex] = currentVideo;
+      notifyListeners();
+      rethrow;
+    } finally {
+      _pendingFavoriteUpdates.remove(videoId);
+      notifyListeners();
+    }
+  }
+
   Future<VideoPost> _restoreLikeState(VideoPost video) async {
     final storedValue = await _storage.getString(_storageKey(video.id));
     if (storedValue == null) return video;
@@ -83,5 +121,14 @@ class DiscoverProvider extends ChangeNotifier {
     );
   }
 
+  Future<VideoPost> _restoreFavoriteState(VideoPost video) async {
+    final isFavorite = await _storage.getBool(_favoriteStorageKey(video.id));
+    if (isFavorite == null) return video;
+
+    return video.copyWith(isFavorite: isFavorite);
+  }
+
   String _storageKey(String videoId) => 'video_like_$videoId';
+
+  String _favoriteStorageKey(String videoId) => 'video_favorite_$videoId';
 }
