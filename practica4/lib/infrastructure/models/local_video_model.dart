@@ -9,25 +9,32 @@ class LocalVideoModel {
 
   LocalVideoModel({
     required this.id,
-    required this.name, 
-    required this.videoUrl, 
-    this.likes = 0, 
+    required this.name,
+    required this.videoUrl,
+    this.likes = 0,
     this.views = 0,
   });
 
+  factory LocalVideoModel.fromJson(Map<String, dynamic> json) {
+    final videoUrl = json['videoUrl'] ?? '';
+    final uri = Uri.tryParse(videoUrl);
+    final driveId = uri?.queryParameters['id'];
+    final fallbackId = uri?.host == 'drive.google.com' && driveId != null
+        ? 'drive:$driveId'
+        : videoUrl;
 
-  factory LocalVideoModel.fromJson(Map<String, dynamic> json) => LocalVideoModel(
-    id: json['id'] ?? json['videoUrl'] ?? '',
-    name: json['name'] ?? '',
-    videoUrl: json['videoUrl'] ?? '',
-    likes: json['likes'] ?? 0,
-    views: json['views'] ?? 0,
-  );
-
+    return LocalVideoModel(
+      id: json['id'] ?? fallbackId,
+      name: json['name'] ?? '',
+      videoUrl: videoUrl,
+      likes: json['likes'] ?? 0,
+      views: json['views'] ?? 0,
+    );
+  }
 
   VideoPost toVideoPostEntity() => VideoPost(
     id: id,
-    caption: name, 
+    caption: name,
     videoUrl: videoUrl,
     likes: likes,
     views: views,

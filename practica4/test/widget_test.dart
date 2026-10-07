@@ -18,12 +18,28 @@ void main() {
     final entities = models.map((model) => model.toVideoPostEntity()).toList();
     final ids = entities.map((video) => video.id).toList();
 
-    expect(ids, hasLength(8));
+    expect(ids, hasLength(videoPosts.length));
     expect(ids.toSet(), hasLength(ids.length));
     expect(entities.map((video) => video.id), models.map((model) => model.id));
     expect(
+      ids,
+      videoPosts.map(
+        (video) => 'drive:${Uri.parse(video['videoUrl']).queryParameters['id']}',
+      ),
+    );
+    expect(
       entities.map((video) => video.videoUrl),
       videoPosts.map((video) => video['videoUrl']),
+    );
+  });
+
+  test('derives the same stable ID for legacy video records', () {
+    final video = videoPosts.first;
+    final legacyRecord = Map<String, dynamic>.from(video)..remove('id');
+
+    expect(
+      LocalVideoModel.fromJson(legacyRecord).id,
+      video['id'],
     );
   });
 }
