@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         Provider<LocalStorageService>.value(value: localStorage),
         ChangeNotifierProvider( 
           lazy: false,
-          create: (_) => DiscoverProvider()..loadNextPage() 
+          create: (_) => DiscoverProvider(localStorage)..loadNextPage()
         ),
       ],
       child: MaterialApp(

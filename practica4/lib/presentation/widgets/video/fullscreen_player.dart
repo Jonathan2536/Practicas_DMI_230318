@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:practica4/domain/entities/video_post.dart';
+import 'package:practica4/presentation/providers/discover_provider.dart';
 import 'package:practica4/presentation/widgets/shared/video_buttons.dart';
 import 'package:practica4/presentation/widgets/video/video_background.dart';
 
@@ -66,6 +68,8 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    final discoverProvider = context.watch<DiscoverProvider>();
+
     return FutureBuilder(
       future: _initializeFuture,
       builder: (context, snapshot) {
@@ -109,6 +113,10 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
                     video: widget.videoPost,
                     isMuted: isMuted,
                     onToggleMute: _toggleMute,
+                    isLikeUpdatePending: discoverProvider.isLikeUpdatePending(
+                      widget.videoPost.id,
+                    ),
+                    onToggleLike: () => _toggleLike(context, discoverProvider),
                   ),
                 ),
                 
@@ -124,6 +132,20 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
         );
       },
     );
+  }
+
+  Future<void> _toggleLike(
+    BuildContext context,
+    DiscoverProvider discoverProvider,
+  ) async {
+    try {
+      await discoverProvider.toggleLike(widget.videoPost.id);
+    } catch (error) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No se pudo guardar el like: $error')),
+      );
+    }
   }
 }
 

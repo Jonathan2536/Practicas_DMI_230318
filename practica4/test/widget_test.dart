@@ -1,11 +1,21 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:practica4/infrastructure/models/local_video_model.dart';
+import 'package:practica4/infrastructure/services/shared_preferences_storage_service.dart';
 import 'package:practica4/presentation/providers/discover_provider.dart';
 import 'package:practica4/shared/data/local_video_post.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  late SharedPreferencesStorageService storage;
+
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({});
+    storage = SharedPreferencesStorageService();
+    await storage.initialize();
+  });
+
   test('loads the initial video posts', () async {
-    final provider = DiscoverProvider();
+    final provider = DiscoverProvider(storage);
 
     await provider.loadNextPage();
 
@@ -24,7 +34,8 @@ void main() {
     expect(
       ids,
       videoPosts.map(
-        (video) => 'drive:${Uri.parse(video['videoUrl']).queryParameters['id']}',
+        (video) =>
+            'drive:${Uri.parse(video['videoUrl']).queryParameters['id']}',
       ),
     );
     expect(
@@ -37,9 +48,46 @@ void main() {
     final video = videoPosts.first;
     final legacyRecord = Map<String, dynamic>.from(video)..remove('id');
 
-    expect(
-      LocalVideoModel.fromJson(legacyRecord).id,
-      video['id'],
-    );
+    expect(LocalVideoModel.fromJson(legacyRecord).id, video['id']);
   });
+
+  test('toggles a like and updates its count exactly once', () async {
+    final provider = DiscoverProvider(storage);
+    await provider.loadNextPage();
+
+    final video = provider.videos.first;
+    final initialLikes = video.likes;
+
+    final firstToggle = provider.toggleLike(video.id);
+    final secondToggle = provider.toggleLike(video.id);
+    await Future.wait([firstToggle, secondToggle]);
+
+    final likedVideo = provider.videos.first;
+    expect(likedVideo.isLiked, isTrue);
+    expect(likedVideo.likes, initialLikes + 1);
+
+    await provider.toggleLike(video.id);
+
+    final unlikedVideo = provider.videos.first;
+    expect(unlikedVideo.isLiked, isFalse);
+    expect(unlikedVideo.likes, initialLikes);
+  });
+
+  test(
+    'restores the liked state and count after provider recreation',
+    () async {
+      final provider = DiscoverProvider(storage);
+      await provider.loadNextPage();
+      final video = provider.videos.first;
+      await provider.toggleLike(video.id);
+
+      final restartedProvider = DiscoverProvider(storage);
+      await restartedProvider.loadNextPage();
+
+      final restoredVideo = restartedProvider.videos.first;
+      expect(restoredVideo.id, video.id);
+      expect(restoredVideo.isLiked, isTrue);
+      expect(restoredVideo.likes, video.likes + 1);
+    },
+  );
 }
