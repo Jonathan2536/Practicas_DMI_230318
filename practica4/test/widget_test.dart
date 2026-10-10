@@ -1,9 +1,17 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:practica4/domain/services/local_storage_service.dart';
+import 'package:practica4/infrastructure/datasources/local_video_post_data_source.dart';
 import 'package:practica4/infrastructure/models/local_video_model.dart';
+import 'package:practica4/infrastructure/repositories/video_post_repository_impl.dart';
 import 'package:practica4/infrastructure/services/shared_preferences_storage_service.dart';
 import 'package:practica4/presentation/providers/discover_provider.dart';
 import 'package:practica4/shared/data/local_video_post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+DiscoverProvider createDiscoverProvider(LocalStorageService storage) {
+  final repository = VideoPostRepositoryImpl(LocalVideoPostDataSource());
+  return DiscoverProvider(repository, storage);
+}
 
 void main() {
   late SharedPreferencesStorageService storage;
@@ -15,7 +23,7 @@ void main() {
   });
 
   test('loads the initial video posts', () async {
-    final provider = DiscoverProvider(storage);
+    final provider = createDiscoverProvider(storage);
 
     await provider.loadNextPage();
 
@@ -52,7 +60,7 @@ void main() {
   });
 
   test('toggles a like and updates its count exactly once', () async {
-    final provider = DiscoverProvider(storage);
+    final provider = createDiscoverProvider(storage);
     await provider.loadNextPage();
 
     final video = provider.videos.first;
@@ -76,12 +84,12 @@ void main() {
   test(
     'restores the liked state and count after provider recreation',
     () async {
-      final provider = DiscoverProvider(storage);
+      final provider = createDiscoverProvider(storage);
       await provider.loadNextPage();
       final video = provider.videos.first;
       await provider.toggleLike(video.id);
 
-      final restartedProvider = DiscoverProvider(storage);
+      final restartedProvider = createDiscoverProvider(storage);
       await restartedProvider.loadNextPage();
 
       final restoredVideo = restartedProvider.videos.first;
@@ -92,7 +100,7 @@ void main() {
   );
 
   test('toggles favorites independently from likes', () async {
-    final provider = DiscoverProvider(storage);
+    final provider = createDiscoverProvider(storage);
     await provider.loadNextPage();
 
     final video = provider.videos.first;
@@ -121,12 +129,12 @@ void main() {
   });
 
   test('restores favorite state after provider recreation', () async {
-    final provider = DiscoverProvider(storage);
+    final provider = createDiscoverProvider(storage);
     await provider.loadNextPage();
     final video = provider.videos.first;
     await provider.toggleFavorite(video.id);
 
-    final restartedProvider = DiscoverProvider(storage);
+    final restartedProvider = createDiscoverProvider(storage);
     await restartedProvider.loadNextPage();
 
     final restoredVideo = restartedProvider.videos.first;
@@ -136,16 +144,19 @@ void main() {
     expect(restoredVideo.likes, video.likes);
   });
 
-  test('ignores duplicate favorite toggles while persistence is pending', () async {
-    final provider = DiscoverProvider(storage);
-    await provider.loadNextPage();
-    final video = provider.videos.first;
+  test(
+    'ignores duplicate favorite toggles while persistence is pending',
+    () async {
+      final provider = createDiscoverProvider(storage);
+      await provider.loadNextPage();
+      final video = provider.videos.first;
 
-    final firstToggle = provider.toggleFavorite(video.id);
-    final secondToggle = provider.toggleFavorite(video.id);
-    await Future.wait([firstToggle, secondToggle]);
+      final firstToggle = provider.toggleFavorite(video.id);
+      final secondToggle = provider.toggleFavorite(video.id);
+      await Future.wait([firstToggle, secondToggle]);
 
-    expect(provider.videos.first.isFavorite, isTrue);
-    expect(await storage.getBool('video_favorite_${video.id}'), isTrue);
-  });
+      expect(provider.videos.first.isFavorite, isTrue);
+      expect(await storage.getBool('video_favorite_${video.id}'), isTrue);
+    },
+  );
 }

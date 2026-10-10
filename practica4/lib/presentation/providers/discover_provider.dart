@@ -2,14 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:practica4/domain/entities/video_post.dart';
+import 'package:practica4/domain/repositories/video_post_repository.dart';
 import 'package:practica4/domain/services/local_storage_service.dart';
-import 'package:practica4/infrastructure/models/local_video_model.dart';
-
-import 'package:practica4/shared/data/local_video_post.dart';
 
 class DiscoverProvider extends ChangeNotifier {
-  DiscoverProvider(this._storage);
+  DiscoverProvider(this._repository, this._storage);
 
+  final VideoPostRepository _repository;
   final LocalStorageService _storage;
   final Set<String> _pendingLikeUpdates = {};
   final Set<String> _pendingFavoriteUpdates = {};
@@ -18,9 +17,7 @@ class DiscoverProvider extends ChangeNotifier {
   List<VideoPost> videos = [];
 
   Future<void> loadNextPage() async {
-    final newVideos = videoPosts
-        .map((video) => LocalVideoModel.fromJson(video).toVideoPostEntity())
-        .toList();
+    final newVideos = await _repository.getVideoPosts();
     videos = await Future.wait(
       newVideos.map((video) async {
         final videoWithLike = await _restoreLikeState(video);
