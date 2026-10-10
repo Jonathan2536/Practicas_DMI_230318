@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:practica4/domain/services/local_storage_service.dart';
+import 'package:practica4/infrastructure/datasources/instagram_video_data_source.dart';
 import 'package:practica4/infrastructure/datasources/local_video_post_data_source.dart';
+import 'package:practica4/infrastructure/datasources/youtube_video_data_source.dart';
 import 'package:practica4/infrastructure/models/local_video_model.dart';
 import 'package:practica4/infrastructure/repositories/video_post_repository_impl.dart';
 import 'package:practica4/infrastructure/services/shared_preferences_storage_service.dart';
@@ -9,7 +11,11 @@ import 'package:practica4/shared/data/local_video_post.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 DiscoverProvider createDiscoverProvider(LocalStorageService storage) {
-  final repository = VideoPostRepositoryImpl(LocalVideoPostDataSource());
+  final repository = VideoPostRepositoryImpl([
+    LocalVideoPostDataSource(),
+    YouTubeVideoDataSource(),
+    InstagramVideoDataSource(),
+  ]);
   return DiscoverProvider(repository, storage);
 }
 
@@ -29,6 +35,14 @@ void main() {
 
     expect(provider.initialLoading, isFalse);
     expect(provider.videos, isNotEmpty);
+  });
+
+  test('local datasource loads posts and preserves their stable IDs', () async {
+    final videos = await LocalVideoPostDataSource().getVideoPosts();
+
+    expect(videos, hasLength(videoPosts.length));
+    expect(videos.map((video) => video.id).toSet(), hasLength(videos.length));
+    expect(videos.first.id, videoPosts.first['id']);
   });
 
   test('preserves stable unique video IDs through the model mapper', () {
