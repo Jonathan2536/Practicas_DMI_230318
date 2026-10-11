@@ -10,23 +10,20 @@ import 'package:practica4/infrastructure/repositories/video_post_repository_impl
 import 'package:practica4/infrastructure/services/shared_preferences_storage_service.dart';
 import 'package:practica4/presentation/providers/discover_provider.dart';
 import 'package:practica4/presentation/screens/discover/discover_screen.dart';
+import 'package:practica4/presentation/screens/splash/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final localStorage = SharedPreferencesStorageService();
   await localStorage.initialize();
-  final videoRepository = VideoPostRepositoryImpl(
-    [
-      LocalVideoPostDataSource(),
-      YouTubeVideoDataSource(),
-      InstagramVideoDataSource(),
-    ],
-  );
+  final videoRepository = VideoPostRepositoryImpl([
+    LocalVideoPostDataSource(),
+    YouTubeVideoDataSource(),
+    InstagramVideoDataSource(),
+  ]);
 
-  runApp(
-    MyApp(localStorage: localStorage, videoRepository: videoRepository),
-  );
+  runApp(MyApp(localStorage: localStorage, videoRepository: videoRepository));
 }
 
 class MyApp extends StatelessWidget {
@@ -45,19 +42,19 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider<LocalStorageService>.value(value: localStorage),
         Provider<VideoPostRepository>.value(value: videoRepository),
-        ChangeNotifierProvider( 
+        ChangeNotifierProvider(
           lazy: false,
           create: (context) => DiscoverProvider(
             context.read<VideoPostRepository>(),
             context.read<LocalStorageService>(),
-          )..loadNextPage()
+          )..loadNextPage(),
         ),
       ],
       child: MaterialApp(
         title: 'TokTik',
         debugShowCheckedModeBanner: false,
         theme: AppTheme().getTheme(),
-        home: const DiscoverScreen()
+        home: const SplashScreen(destination: DiscoverScreen()),
       ),
     );
   }
