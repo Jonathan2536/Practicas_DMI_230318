@@ -1,7 +1,25 @@
 List<Map<String, dynamic>> videoPosts = [
   {
     'id': 'drive:1Wwa6rcqFCIKdu785S7BNQRZ6BgGBmQkC',
-    'name': 'Video 1',
+    'name': 'Video 1: Un recorrido tranquilo por la naturaleza al amanecer. '
+        'La luz suave transforma el paisaje mientras el sendero avanza entre '
+        'árboles, pequeñas flores y sonidos de aves. En este video comparto '
+        'algunos momentos de una caminata sin prisa, ideal para detenerse, '
+        'respirar profundamente y disfrutar los detalles que normalmente '
+        'pasamos por alto. Al final del camino, el sol ilumina el valle y '
+        'recuerda que siempre vale la pena tomarse un momento para observar. '
+        'Durante el trayecto también encontramos un pequeño arroyo que cruza '
+        'las piedras y refleja los colores del cielo. Me detuve unos minutos '
+        'para escuchar el agua y observar cómo cambiaba la luz entre las '
+        'ramas. Son detalles sencillos, pero hacen que cada paseo sea distinto '
+        'y nos ayudan a conectar con el lugar. '
+        'La ruta continúa por una pendiente suave hasta llegar a un mirador '
+        'natural. Desde allí se puede ver el valle completo, las montañas a '
+        'lo lejos y las nubes avanzando lentamente. Si decides hacer una '
+        'caminata parecida, recuerda llevar agua, respetar el sendero y dejar '
+        'el entorno tal como lo encontraste. Gracias por acompañarme en este '
+        'recorrido; espero que estas imágenes te animen a descubrir un rincón '
+        'tranquilo cerca de casa y a disfrutarlo con calma.',
     'videoUrl': 'https://drive.google.com/uc?export=download&id=1Wwa6rcqFCIKdu785S7BNQRZ6BgGBmQkC',
     'likes': 23230,
     'views': 1523,

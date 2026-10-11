@@ -5,6 +5,7 @@ import 'package:practica4/domain/entities/video_post.dart';
 import 'package:practica4/presentation/providers/discover_provider.dart';
 import 'package:practica4/presentation/widgets/shared/video_buttons.dart';
 import 'package:practica4/presentation/widgets/video/video_background.dart';
+import 'package:practica4/presentation/widgets/video/video_caption.dart';
 
 class FullScreenPlayer extends StatefulWidget {
   final VideoPost videoPost;
@@ -130,7 +131,10 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
                 Positioned(
                   bottom: 50,
                   left: 20,
-                  child: _VideoCaption(caption: widget.videoPost.caption),
+                  child: SizedBox(
+                    width: MediaQuery.sizeOf(context).width * 0.6,
+                    child: VideoCaption(caption: widget.videoPost.caption),
+                  ),
                 ),
               ],
             ),
@@ -166,22 +170,5 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
         SnackBar(content: Text('No se pudo guardar el favorito: $error')),
       );
     }
-  }
-}
-
-class _VideoCaption extends StatelessWidget {
-  final String caption;
-
-  const _VideoCaption({required this.caption});
-
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final titleStyle = Theme.of(context).textTheme.titleLarge;
-
-    return SizedBox(
-      width: size.width * 0.6,
-      child: Text(caption, maxLines: 2, style: titleStyle),
-    );
   }
 }

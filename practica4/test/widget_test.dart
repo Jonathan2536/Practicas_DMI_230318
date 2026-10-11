@@ -11,6 +11,7 @@ import 'package:practica4/infrastructure/repositories/video_post_repository_impl
 import 'package:practica4/infrastructure/services/shared_preferences_storage_service.dart';
 import 'package:practica4/presentation/providers/discover_provider.dart';
 import 'package:practica4/presentation/screens/discover/discover_screen.dart';
+import 'package:practica4/presentation/widgets/video/video_caption.dart';
 import 'package:practica4/shared/data/local_video_post.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -255,6 +256,74 @@ void main() {
           .selected,
       isTrue,
     );
+  });
+
+  testWidgets('short captions do not show the expand action', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 240,
+            child: VideoCaption(caption: 'Descripción breve'),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Descripción breve'), findsOneWidget);
+    expect(find.text('... más'), findsNothing);
+  });
+
+  testWidgets('long captions open a scrollable full description', (
+    tester,
+  ) async {
+    final longCaption = List.filled(
+      20,
+      'Una descripción extensa que permite recorrer el contenido completo '
+      'verticalmente y regresar al feed cuando se cierra.',
+    ).join('\n\n');
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SizedBox(width: 240, child: VideoCaption(caption: longCaption)),
+        ),
+      ),
+    );
+
+    expect(find.text('... más'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('show-full-caption')));
+    await tester.pumpAndSettle();
+
+    final scrollable = tester.widget<SingleChildScrollView>(
+      find.byKey(const ValueKey('full-caption-scroll')),
+    );
+    expect(scrollable.controller, isNull);
+    final fullCaption = find.descendant(
+      of: find.byKey(const ValueKey('full-caption-scroll')),
+      matching: find.text(longCaption),
+    );
+    expect(fullCaption, findsOneWidget);
+    final scrollPosition = tester
+        .state<ScrollableState>(
+          find.descendant(
+            of: find.byKey(const ValueKey('full-caption-scroll')),
+            matching: find.byType(Scrollable),
+          ),
+        )
+        .position;
+    expect(scrollPosition.pixels, 0);
+
+    await tester.drag(
+      find.byKey(const ValueKey('full-caption-scroll')),
+      const Offset(0, -300),
+    );
+    await tester.pumpAndSettle();
+    expect(scrollPosition.pixels, greaterThan(0));
+
+    await tester.tap(find.byKey(const ValueKey('close-full-caption')));
+    await tester.pumpAndSettle();
+    expect(find.text('... más'), findsOneWidget);
   });
 }
 
