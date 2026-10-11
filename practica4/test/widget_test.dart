@@ -11,6 +11,8 @@ import 'package:practica4/infrastructure/repositories/video_post_repository_impl
 import 'package:practica4/infrastructure/services/shared_preferences_storage_service.dart';
 import 'package:practica4/presentation/providers/discover_provider.dart';
 import 'package:practica4/presentation/screens/discover/discover_screen.dart';
+import 'package:practica4/presentation/widgets/shared/video_buttons.dart';
+import 'package:practica4/presentation/widgets/video/fullscreen_player.dart';
 import 'package:practica4/presentation/widgets/video/video_caption.dart';
 import 'package:practica4/shared/data/local_video_post.dart';
 import 'package:provider/provider.dart';
@@ -324,6 +326,74 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('close-full-caption')));
     await tester.pumpAndSettle();
     expect(find.text('... más'), findsOneWidget);
+  });
+
+  testWidgets('mute control reflects and toggles its sound state', (
+    tester,
+  ) async {
+    var isMuted = false;
+    final video = VideoPost(
+      id: 'test-video',
+      caption: 'Test video',
+      videoUrl: 'https://example.com/video.mp4',
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (context, setState) => VideoButtons(
+              video: video,
+              isMuted: isMuted,
+              onToggleMute: () => setState(() => isMuted = !isMuted),
+              isLikeUpdatePending: false,
+              onToggleLike: () {},
+              isFavoriteUpdatePending: false,
+              onToggleFavorite: () {},
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.byIcon(Icons.volume_up), findsOneWidget);
+    expect(find.byTooltip('Desactivar sonido'), findsOneWidget);
+    await tester.tap(find.byTooltip('Desactivar sonido'));
+    await tester.pump();
+    expect(find.byIcon(Icons.volume_off), findsOneWidget);
+    expect(find.byTooltip('Activar sonido'), findsOneWidget);
+  });
+
+  testWidgets('video initialization errors show a recoverable visual state', (
+    tester,
+  ) async {
+    final provider = createDiscoverProvider(storage);
+    await provider.loadNextPage();
+    addTearDown(provider.dispose);
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<DiscoverProvider>.value(
+        value: provider,
+        child: MaterialApp(
+          home: Scaffold(
+            body: FullScreenPlayer(
+              videoPost: VideoPost(
+                id: 'invalid-video',
+                caption: 'Invalid video',
+                videoUrl: 'not a valid video URL',
+              ),
+              isActive: true,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Este video no está disponible. Prueba con otro video.'),
+      findsOneWidget,
+    );
   });
 }
 
