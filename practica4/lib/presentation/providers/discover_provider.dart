@@ -16,6 +16,23 @@ class DiscoverProvider extends ChangeNotifier {
   bool initialLoading = true;
   List<VideoPost> videos = [];
 
+  List<VideoPost> get forYouVideos {
+    final recommendedVideos = List<VideoPost>.of(videos);
+    recommendedVideos.sort((first, second) {
+      final viewsComparison = second.views.compareTo(first.views);
+      if (viewsComparison != 0) return viewsComparison;
+
+      final likesComparison = second.likes.compareTo(first.likes);
+      if (likesComparison != 0) return likesComparison;
+
+      return first.id.compareTo(second.id);
+    });
+    return recommendedVideos;
+  }
+
+  List<VideoPost> get favoriteVideos =>
+      videos.where((video) => video.isFavorite).toList();
+
   Future<void> loadNextPage() async {
     final newVideos = await _repository.getVideoPosts();
     videos = await Future.wait(

@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:practica4/domain/entities/video_post.dart';
+import 'package:practica4/domain/repositories/video_post_repository.dart';
 import 'package:practica4/domain/services/local_storage_service.dart';
 import 'package:practica4/infrastructure/datasources/instagram_video_data_source.dart';
 import 'package:practica4/infrastructure/datasources/local_video_post_data_source.dart';
@@ -7,7 +10,9 @@ import 'package:practica4/infrastructure/models/local_video_model.dart';
 import 'package:practica4/infrastructure/repositories/video_post_repository_impl.dart';
 import 'package:practica4/infrastructure/services/shared_preferences_storage_service.dart';
 import 'package:practica4/presentation/providers/discover_provider.dart';
+import 'package:practica4/presentation/screens/discover/discover_screen.dart';
 import 'package:practica4/shared/data/local_video_post.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 DiscoverProvider createDiscoverProvider(LocalStorageService storage) {
@@ -36,6 +41,22 @@ void main() {
     expect(provider.initialLoading, isFalse);
     expect(provider.videos, isNotEmpty);
   });
+
+  test(
+    'For You sorts posts by views without changing Discover order',
+    () async {
+      final provider = createDiscoverProvider(storage);
+      await provider.loadNextPage();
+
+      expect(
+        provider.forYouVideos.first.views,
+        provider.videos
+            .map((video) => video.views)
+            .reduce((a, b) => a > b ? a : b),
+      );
+      expect(provider.videos.first.id, videoPosts.first['id']);
+    },
+  );
 
   test('local datasource loads posts and preserves their stable IDs', () async {
     final videos = await LocalVideoPostDataSource().getVideoPosts();
@@ -124,6 +145,7 @@ void main() {
 
     var updatedVideo = provider.videos.first;
     expect(updatedVideo.isFavorite, isTrue);
+    expect(provider.favoriteVideos, [updatedVideo]);
     expect(updatedVideo.isLiked, isFalse);
     expect(updatedVideo.likes, initialLikes);
 
@@ -138,6 +160,7 @@ void main() {
 
     updatedVideo = provider.videos.first;
     expect(updatedVideo.isFavorite, isFalse);
+    expect(provider.favoriteVideos, isEmpty);
     expect(updatedVideo.isLiked, isTrue);
     expect(updatedVideo.likes, initialLikes + 1);
   });
@@ -173,4 +196,69 @@ void main() {
       expect(await storage.getBool('video_favorite_${video.id}'), isTrue);
     },
   );
+
+  testWidgets('horizontal page swipes navigate between video sections', (
+    tester,
+  ) async {
+    final provider = DiscoverProvider(_EmptyVideoRepository(), storage);
+    await provider.loadNextPage();
+    addTearDown(provider.dispose);
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<DiscoverProvider>.value(
+        value: provider,
+        child: MaterialApp(
+          theme: ThemeData(brightness: Brightness.dark),
+          home: const DiscoverScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      tester
+          .widget<Semantics>(
+            find.byKey(const ValueKey('section-semantic-Discover')),
+          )
+          .properties
+          .selected,
+      isTrue,
+    );
+
+    await tester.drag(
+      find.byKey(const ValueKey('video-sections-page-view')),
+      const Offset(-600, 0),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<Semantics>(
+            find.byKey(const ValueKey('section-semantic-For You')),
+          )
+          .properties
+          .selected,
+      isTrue,
+    );
+
+    await tester.drag(
+      find.byKey(const ValueKey('video-sections-page-view')),
+      const Offset(-600, 0),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('No tienes videos favoritos'), findsOneWidget);
+    expect(
+      tester
+          .widget<Semantics>(
+            find.byKey(const ValueKey('section-semantic-Favorites')),
+          )
+          .properties
+          .selected,
+      isTrue,
+    );
+  });
+}
+
+class _EmptyVideoRepository implements VideoPostRepository {
+  @override
+  Future<List<VideoPost>> getVideoPosts() async => [];
 }

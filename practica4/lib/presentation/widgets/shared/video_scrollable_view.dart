@@ -3,12 +3,13 @@ import 'package:practica4/domain/entities/video_post.dart';
 import 'package:practica4/presentation/widgets/video/fullscreen_player.dart';
 
 class VideoScrollableView extends StatefulWidget {
-  
   final List<VideoPost> videos;
-  
+  final bool isActive;
+
   const VideoScrollableView({
-    super.key, 
-    required this.videos
+    super.key,
+    required this.videos,
+    this.isActive = true,
   });
 
   @override
@@ -34,13 +35,11 @@ class _VideoScrollableViewState extends State<VideoScrollableView> {
             SizedBox.expand(
               child: FullScreenPlayer(
                 videoPost: videoPost,
-                isActive: index == _currentIndex,
-              )
+                isActive: widget.isActive && index == _currentIndex,
+              ),
             ),
-            
           ],
         );
-
       },
     );
   }
