@@ -41,6 +41,30 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       );
     }
 
+    if (discoverProvider.videos.isEmpty && discoverProvider.loadError != null) {
+      return Scaffold(
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.cloud_off_outlined, size: 48),
+                const SizedBox(height: 12),
+                Text(discoverProvider.loadError!, textAlign: TextAlign.center),
+                const SizedBox(height: 16),
+                FilledButton.icon(
+                  onPressed: () => discoverProvider.loadNextPage(),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Reintentar'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     final sectionVideos = [
       discoverProvider.videos,
       discoverProvider.forYouVideos,
@@ -48,73 +72,100 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     ];
 
     return Scaffold(
-      body: Stack(
+      body: Column(
         children: [
-          PageView.builder(
-            key: const ValueKey('video-sections-page-view'),
-            controller: _pageController,
-            itemCount: _sections.length,
-            onPageChanged: (index) {
-              setState(() => _selectedSection = index);
-            },
-            itemBuilder: (context, index) => _VideoSection(
-              videos: sectionVideos[index],
-              sectionName: _sections[index],
-              isActive: _selectedSection == index,
-            ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Row(
-                children: List.generate(_sections.length, (index) {
-                  final isSelected = index == _selectedSection;
-
-                  return Expanded(
-                    child: Semantics(
-                      key: ValueKey('section-semantic-${_sections[index]}'),
-                      button: true,
-                      selected: isSelected,
-                      child: InkWell(
-                        key: ValueKey('section-tab-${_sections[index]}'),
-                        borderRadius: BorderRadius.circular(24),
-                        onTap: () => _selectSection(index),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 12,
-                            horizontal: 4,
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                _sections[index],
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: isSelected
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              AnimatedContainer(
-                                duration: const Duration(milliseconds: 180),
-                                height: 3,
-                                width: isSelected ? 32 : 0,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(2),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }),
+          if (discoverProvider.sourceFailures.isNotEmpty)
+            SafeArea(
+              bottom: false,
+              child: MaterialBanner(
+                content: Text(
+                  'No se pudieron cargar: '
+                  '${discoverProvider.sourceFailures.map((failure) => failure.source).join(', ')}. '
+                  'Revisa la conexión y configuración.',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => discoverProvider.loadNextPage(),
+                    child: const Text('Reintentar'),
+                  ),
+                ],
               ),
+            ),
+          Expanded(
+            child: Stack(
+              children: [
+                PageView.builder(
+                  key: const ValueKey('video-sections-page-view'),
+                  controller: _pageController,
+                  itemCount: _sections.length,
+                  onPageChanged: (index) {
+                    setState(() => _selectedSection = index);
+                  },
+                  itemBuilder: (context, index) => _VideoSection(
+                    videos: sectionVideos[index],
+                    sectionName: _sections[index],
+                    isActive: _selectedSection == index,
+                  ),
+                ),
+                SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    child: Row(
+                      children: List.generate(_sections.length, (index) {
+                        final isSelected = index == _selectedSection;
+
+                        return Expanded(
+                          child: Semantics(
+                            key: ValueKey(
+                              'section-semantic-${_sections[index]}',
+                            ),
+                            button: true,
+                            selected: isSelected,
+                            child: InkWell(
+                              key: ValueKey('section-tab-${_sections[index]}'),
+                              borderRadius: BorderRadius.circular(24),
+                              onTap: () => _selectSection(index),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                  horizontal: 4,
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      _sections[index],
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    AnimatedContainer(
+                                      duration: const Duration(
+                                        milliseconds: 180,
+                                      ),
+                                      height: 3,
+                                      width: isSelected ? 32 : 0,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(2),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

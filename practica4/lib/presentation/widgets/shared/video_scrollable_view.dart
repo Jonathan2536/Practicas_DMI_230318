@@ -17,11 +17,50 @@ class VideoScrollableView extends StatefulWidget {
 }
 
 class _VideoScrollableViewState extends State<VideoScrollableView> {
+  final PageController _pageController = PageController();
   int _currentIndex = 0;
+
+  @override
+  void didUpdateWidget(covariant VideoScrollableView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_hasSameVideoOrder(oldWidget.videos, widget.videos)) return;
+
+    final currentVideoId = oldWidget.videos.isEmpty
+        ? null
+        : oldWidget.videos[_currentIndex.clamp(0, oldWidget.videos.length - 1)]
+              .id;
+    final preservedIndex = currentVideoId == null
+        ? -1
+        : widget.videos.indexWhere((video) => video.id == currentVideoId);
+    final nextIndex = preservedIndex < 0 ? 0 : preservedIndex;
+    _currentIndex = nextIndex;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted &&
+          _pageController.hasClients &&
+          widget.videos.isNotEmpty) {
+        _pageController.jumpToPage(nextIndex);
+      }
+    });
+  }
+
+  bool _hasSameVideoOrder(List<VideoPost> first, List<VideoPost> second) {
+    if (first.length != second.length) return false;
+    for (var index = 0; index < first.length; index++) {
+      if (first[index].id != second[index].id) return false;
+    }
+    return true;
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return PageView.builder(
+      controller: _pageController,
       scrollDirection: Axis.vertical,
       physics: const BouncingScrollPhysics(),
       itemCount: widget.videos.length,

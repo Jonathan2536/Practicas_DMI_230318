@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:practica4/domain/entities/video_post.dart';
@@ -14,7 +15,10 @@ class DiscoverProvider extends ChangeNotifier {
   final Set<String> _pendingFavoriteUpdates = {};
 
   bool initialLoading = true;
+  bool _loadingInProgress = false;
   List<VideoPost> videos = [];
+  String? loadError;
+  List<VideoPostSourceFailure> sourceFailures = const [];
 
   List<VideoPost> get forYouVideos {
     final recommendedVideos = List<VideoPost>.of(videos);
@@ -34,15 +38,38 @@ class DiscoverProvider extends ChangeNotifier {
       videos.where((video) => video.isFavorite).toList();
 
   Future<void> loadNextPage() async {
-    final newVideos = await _repository.getVideoPosts();
-    videos = await Future.wait(
-      newVideos.map((video) async {
-        final videoWithLike = await _restoreLikeState(video);
-        return _restoreFavoriteState(videoWithLike);
-      }),
-    );
-    initialLoading = false;
-    notifyListeners();
+    if (_loadingInProgress) return;
+    _loadingInProgress = true;
+    final repository = _repository;
+    final diagnostics = repository is VideoPostRepositoryDiagnostics
+        ? repository as VideoPostRepositoryDiagnostics
+        : null;
+    loadError = null;
+    sourceFailures = diagnostics?.lastSourceFailures ?? const [];
+    try {
+      final newVideos = await repository.getVideoPosts();
+      final restoredVideos = await Future.wait(
+        newVideos.map((video) async {
+          final videoWithLike = await _restoreLikeState(video);
+          return _restoreFavoriteState(videoWithLike);
+        }),
+      );
+      videos = restoredVideos;
+      sourceFailures = diagnostics?.lastSourceFailures ?? const [];
+    } catch (error, stackTrace) {
+      loadError = 'No se pudieron cargar los videos. Revisa tu conexión e inténtalo de nuevo.';
+      sourceFailures = diagnostics?.lastSourceFailures ?? const [];
+      developer.log(
+        'Initial video loading failed (${error.runtimeType}).',
+        name: 'DiscoverProvider',
+        stackTrace: stackTrace,
+        level: 1000,
+      );
+    } finally {
+      initialLoading = false;
+      _loadingInProgress = false;
+      notifyListeners();
+    }
   }
 
   bool isLikeUpdatePending(String videoId) =>
@@ -105,7 +132,10 @@ class DiscoverProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _storage.setBool(_favoriteStorageKey(videoId), updatedVideo.isFavorite);
+      await _storage.setBool(
+        _favoriteStorageKey(videoId),
+        updatedVideo.isFavorite,
+      );
     } catch (_) {
       videos[videoIndex] = currentVideo;
       notifyListeners();
@@ -126,7 +156,9 @@ class DiscoverProvider extends ChangeNotifier {
         decoded['likes'] is! int ||
         (decoded['isLiked'] as bool && (decoded['likes'] as int) < 1) ||
         (decoded['likes'] as int) < 0) {
-      throw FormatException('Invalid stored like state for video "${video.id}".');
+      throw FormatException(
+        'Invalid stored like state for video "${video.id}".',
+      );
     }
 
     return video.copyWith(

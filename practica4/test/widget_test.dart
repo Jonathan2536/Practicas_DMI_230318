@@ -14,6 +14,7 @@ import 'package:practica4/presentation/screens/discover/discover_screen.dart';
 import 'package:practica4/presentation/widgets/shared/video_buttons.dart';
 import 'package:practica4/presentation/widgets/video/fullscreen_player.dart';
 import 'package:practica4/presentation/widgets/video/video_caption.dart';
+import 'package:practica4/presentation/widgets/shared/video_scrollable_view.dart';
 import 'package:practica4/shared/data/local_video_post.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,6 +44,41 @@ void main() {
 
     expect(provider.initialLoading, isFalse);
     expect(provider.videos, isNotEmpty);
+  });
+
+  test(
+    'finishes loading and exposes a retryable error when all sources fail',
+    () async {
+      final provider = DiscoverProvider(_FailingVideoRepository(), storage);
+
+      await provider.loadNextPage();
+
+      expect(provider.initialLoading, isFalse);
+      expect(provider.videos, isEmpty);
+      expect(provider.loadError, contains('No se pudieron cargar los videos'));
+    },
+  );
+
+  testWidgets('shows a retry action after all sources fail', (tester) async {
+    final provider = DiscoverProvider(
+      _RetryableEmptyVideoRepository(),
+      storage,
+    );
+    await provider.loadNextPage();
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<DiscoverProvider>.value(
+        value: provider,
+        child: const MaterialApp(home: DiscoverScreen()),
+      ),
+    );
+
+    expect(find.text('Reintentar'), findsOneWidget);
+    await tester.tap(find.text('Reintentar'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Reintentar'), findsNothing);
+    expect(find.text('No hay videos disponibles'), findsOneWidget);
   });
 
   test(
@@ -394,10 +430,90 @@ void main() {
       find.text('Este video no está disponible. Prueba con otro video.'),
       findsOneWidget,
     );
+    expect(find.byTooltip('Agregar a favoritos'), findsOneWidget);
+    expect(find.byTooltip('Desactivar sonido'), findsOneWidget);
+    expect(find.byKey(const ValueKey('retry-video-playback')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('retry-video-playback')));
+    await tester.pumpAndSettle();
+    expect(
+      find.text('Este video no está disponible. Prueba con otro video.'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('video feed returns to a valid page when its list shrinks', (
+    tester,
+  ) async {
+    final provider = createDiscoverProvider(storage);
+    await provider.loadNextPage();
+    addTearDown(provider.dispose);
+
+    final firstVideo = VideoPost(
+      id: 'first',
+      caption: 'First video',
+      videoUrl: 'invalid-url',
+    );
+    final secondVideo = VideoPost(
+      id: 'second',
+      caption: 'Second video',
+      videoUrl: 'invalid-url',
+    );
+    var videos = [firstVideo, secondVideo];
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<DiscoverProvider>.value(
+        value: provider,
+        child: MaterialApp(
+          home: Scaffold(
+            body: StatefulBuilder(
+              builder: (context, setState) => Column(
+                children: [
+                  TextButton(
+                    onPressed: () => setState(() => videos = [firstVideo]),
+                    child: const Text('Remove current video'),
+                  ),
+                  Expanded(
+                    child: VideoScrollableView(videos: videos, isActive: true),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.drag(find.byType(PageView).last, const Offset(0, -600));
+    await tester.pumpAndSettle();
+    expect(find.text('Second video'), findsOneWidget);
+
+    await tester.tap(find.text('Remove current video'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('First video'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }
 
 class _EmptyVideoRepository implements VideoPostRepository {
   @override
   Future<List<VideoPost>> getVideoPosts() async => [];
+}
+
+class _FailingVideoRepository implements VideoPostRepository {
+  @override
+  Future<List<VideoPost>> getVideoPosts() =>
+      Future.error(Exception('Network failure'));
+}
+
+class _RetryableEmptyVideoRepository implements VideoPostRepository {
+  int requests = 0;
+
+  @override
+  Future<List<VideoPost>> getVideoPosts() async {
+    requests++;
+    if (requests == 1) throw Exception('Network failure');
+    return [];
+  }
 }
