@@ -187,6 +187,57 @@ void main() {
       expect(requests, 2);
       expect(videos, hasLength(2));
     });
+
+    test(
+      'follows playlist pagination until the final page by default',
+      () async {
+        var requests = 0;
+        final source = YouTubeVideoDataSource(
+          config: _configuredApp(),
+          client: MockClient((_) async {
+            requests++;
+            return http.Response(
+              jsonEncode({
+                if (requests < 7) 'nextPageToken': 'next-$requests',
+                'items': [_youtubeItem(videoId: 'video-$requests')],
+              }),
+              200,
+            );
+          }),
+        );
+
+        final videos = await source.getVideoPosts();
+
+        expect(requests, 7);
+        expect(videos, hasLength(7));
+      },
+    );
+
+    test('rejects a repeated playlist page token', () async {
+      final source = YouTubeVideoDataSource(
+        config: _configuredApp(),
+        client: MockClient(
+          (_) async => http.Response(
+            jsonEncode({
+              'nextPageToken': 'same-token',
+              'items': [_youtubeItem(videoId: 'video-1')],
+            }),
+            200,
+          ),
+        ),
+      );
+
+      await expectLater(
+        source.getVideoPosts(),
+        throwsA(
+          isA<VideoSourceApiException>().having(
+            (error) => error.kind,
+            'kind',
+            VideoSourceFailureKind.invalidResponse,
+          ),
+        ),
+      );
+    });
   });
 
   group('PixabayVideoDataSource', () {
@@ -392,8 +443,87 @@ void main() {
 
       expect(requestedUri.queryParameters['q'], 'calm mountains');
       expect(requestedUri.queryParameters['per_page'], '7');
+      expect(requestedUri.queryParameters['page'], '1');
       expect(requestedUri.queryParameters['safesearch'], 'true');
     });
+
+    test('fetches every available page up to Pixabay API limit', () async {
+      final requestedPages = <String?>[];
+      final source = PixabayVideoDataSource(
+        config: _configuredApp(),
+        perPage: 2,
+        client: MockClient((request) async {
+          final page = request.url.queryParameters['page'];
+          requestedPages.add(page);
+          final pageNumber = int.parse(page!);
+          return http.Response(
+            jsonEncode({
+              'totalHits': 5,
+              'hits': [
+                _pixabayItem(
+                  id: pageNumber * 2 - 1,
+                  width: 360,
+                  height: 640,
+                  url: 'https://cdn.example.com/$pageNumber-a.mp4',
+                ),
+                if (pageNumber < 3)
+                  _pixabayItem(
+                    id: pageNumber * 2,
+                    width: 360,
+                    height: 640,
+                    url: 'https://cdn.example.com/$pageNumber-b.mp4',
+                  ),
+              ],
+            }),
+            200,
+          );
+        }),
+      );
+
+      final videos = await source.getVideoPosts();
+
+      expect(requestedPages, ['1', '2', '3']);
+      expect(videos, hasLength(5));
+      expect(videos.map((video) => video.id), [
+        'pixabay:1',
+        'pixabay:2',
+        'pixabay:3',
+        'pixabay:4',
+        'pixabay:5',
+      ]);
+    });
+
+    test(
+      'clamps excessive Pixabay results to its 500 result API limit',
+      () async {
+        final requestedPages = <String?>[];
+        final source = PixabayVideoDataSource(
+          config: _configuredApp(),
+          perPage: 200,
+          client: MockClient((request) async {
+            requestedPages.add(request.url.queryParameters['page']);
+            return http.Response(
+              jsonEncode({
+                'totalHits': 1000,
+                'hits': [
+                  _pixabayItem(
+                    id: requestedPages.length,
+                    width: 360,
+                    height: 640,
+                    url: 'https://cdn.example.com/${requestedPages.length}.mp4',
+                  ),
+                ],
+              }),
+              200,
+            );
+          }),
+        );
+
+        await source.getVideoPosts();
+
+        expect(requestedPages, ['1', '2', '3']);
+      },
+    );
   });
 
   group('VimeoVideoDataSource', () {

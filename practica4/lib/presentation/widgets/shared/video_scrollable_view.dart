@@ -32,7 +32,9 @@ class _VideoScrollableViewState extends State<VideoScrollableView> {
     final preservedIndex = currentVideoId == null
         ? -1
         : widget.videos.indexWhere((video) => video.id == currentVideoId);
-    final nextIndex = preservedIndex < 0 ? 0 : preservedIndex;
+    final nextIndex = preservedIndex < 0
+        ? _currentIndex.clamp(0, widget.videos.length - 1)
+        : preservedIndex;
     _currentIndex = nextIndex;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted &&

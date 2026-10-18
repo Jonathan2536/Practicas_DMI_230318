@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:practica4/domain/entities/video_post.dart';
 import 'package:practica4/presentation/widgets/video/youtube_playback_helpers.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 void main() {
   group('youtubeVideoIdForPlayback', () {
@@ -35,6 +36,43 @@ void main() {
       expect(youtubeErrorMessageForCode(100), contains('privado'));
       expect(youtubeErrorMessageForCode(101), contains('propietario'));
       expect(youtubeErrorMessageForCode(150), contains('propietario'));
+    });
+  });
+
+  group('youtubeWebResourceErrorIsFatal', () {
+    test('treats a main-frame failure as fatal', () {
+      expect(
+        youtubeWebResourceErrorIsFatal(
+          const WebResourceError(
+            errorCode: -2,
+            description: 'Connection failed',
+            isForMainFrame: true,
+          ),
+        ),
+        isTrue,
+      );
+    });
+
+    test('ignores subresource and unclassified failures', () {
+      expect(
+        youtubeWebResourceErrorIsFatal(
+          const WebResourceError(
+            errorCode: -2,
+            description: 'Connection failed',
+            isForMainFrame: false,
+          ),
+        ),
+        isFalse,
+      );
+      expect(
+        youtubeWebResourceErrorIsFatal(
+          const WebResourceError(
+            errorCode: -2,
+            description: 'Connection failed',
+          ),
+        ),
+        isFalse,
+      );
     });
   });
 }

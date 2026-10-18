@@ -47,6 +47,36 @@ void main() {
   });
 
   test(
+    'excludes unsupported videos for the remainder of the session',
+    () async {
+      final unsupported = VideoPost(
+        id: 'local:unsupported',
+        caption: 'Unsupported video',
+        videoUrl: 'https://example.com/unsupported.mp4',
+      );
+      final supported = VideoPost(
+        id: 'local:supported',
+        caption: 'Supported video',
+        videoUrl: 'https://example.com/supported.mp4',
+      );
+      final provider = DiscoverProvider(
+        _StaticVideoRepository([unsupported, supported]),
+        storage,
+      );
+
+      await provider.loadNextPage();
+      provider.excludeUnsupportedVideo(unsupported.id);
+
+      expect(provider.videos, [supported]);
+      expect(provider.forYouVideos, [supported]);
+
+      await provider.loadNextPage();
+
+      expect(provider.videos, [supported]);
+    },
+  );
+
+  test(
     'finishes loading and exposes a retryable error when all sources fail',
     () async {
       final provider = DiscoverProvider(_FailingVideoRepository(), storage);
@@ -100,9 +130,15 @@ void main() {
   test('local datasource loads posts and preserves their stable IDs', () async {
     final videos = await LocalVideoPostDataSource().getVideoPosts();
 
-    expect(videos, hasLength(videoPosts.length));
+    expect(videos, hasLength(8));
     expect(videos.map((video) => video.id).toSet(), hasLength(videos.length));
     expect(videos.first.id, videoPosts.first['id']);
+    expect(
+      videos.any(
+        (video) => video.id == 'drive:1Wwa6rcqFCIKdu785S7BNQRZ6BgGBmQkC',
+      ),
+      isFalse,
+    );
   });
 
   test('preserves stable unique video IDs through the model mapper', () {
@@ -441,7 +477,7 @@ void main() {
     );
   });
 
-  testWidgets('video feed returns to a valid page when its list shrinks', (
+  testWidgets('video feed advances when the current video is removed', (
     tester,
   ) async {
     final provider = createDiscoverProvider(storage);
@@ -458,7 +494,12 @@ void main() {
       caption: 'Second video',
       videoUrl: 'invalid-url',
     );
-    var videos = [firstVideo, secondVideo];
+    final thirdVideo = VideoPost(
+      id: 'third',
+      caption: 'Third video',
+      videoUrl: 'invalid-url',
+    );
+    var videos = [firstVideo, secondVideo, thirdVideo];
 
     await tester.pumpWidget(
       ChangeNotifierProvider<DiscoverProvider>.value(
@@ -469,7 +510,8 @@ void main() {
               builder: (context, setState) => Column(
                 children: [
                   TextButton(
-                    onPressed: () => setState(() => videos = [firstVideo]),
+                    onPressed: () =>
+                        setState(() => videos = [firstVideo, thirdVideo]),
                     child: const Text('Remove current video'),
                   ),
                   Expanded(
@@ -491,7 +533,7 @@ void main() {
     await tester.tap(find.text('Remove current video'));
     await tester.pumpAndSettle();
 
-    expect(find.text('First video'), findsOneWidget);
+    expect(find.text('Third video'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }
@@ -516,4 +558,13 @@ class _RetryableEmptyVideoRepository implements VideoPostRepository {
     if (requests == 1) throw Exception('Network failure');
     return [];
   }
+}
+
+class _StaticVideoRepository implements VideoPostRepository {
+  _StaticVideoRepository(this.videos);
+
+  final List<VideoPost> videos;
+
+  @override
+  Future<List<VideoPost>> getVideoPosts() async => videos;
 }

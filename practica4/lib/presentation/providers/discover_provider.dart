@@ -13,6 +13,7 @@ class DiscoverProvider extends ChangeNotifier {
   final LocalStorageService _storage;
   final Set<String> _pendingLikeUpdates = {};
   final Set<String> _pendingFavoriteUpdates = {};
+  final Set<String> _unsupportedVideoIds = {};
 
   bool initialLoading = true;
   bool _loadingInProgress = false;
@@ -54,7 +55,9 @@ class DiscoverProvider extends ChangeNotifier {
           return _restoreFavoriteState(videoWithLike);
         }),
       );
-      videos = restoredVideos;
+      videos = restoredVideos
+          .where((video) => !_unsupportedVideoIds.contains(video.id))
+          .toList(growable: false);
       sourceFailures = diagnostics?.lastSourceFailures ?? const [];
     } catch (error, stackTrace) {
       loadError = 'No se pudieron cargar los videos. Revisa tu conexión e inténtalo de nuevo.';
@@ -113,6 +116,16 @@ class DiscoverProvider extends ChangeNotifier {
 
   bool isFavoriteUpdatePending(String videoId) =>
       _pendingFavoriteUpdates.contains(videoId);
+
+  void excludeUnsupportedVideo(String videoId) {
+    if (!videos.any((video) => video.id == videoId)) return;
+    if (!_unsupportedVideoIds.add(videoId)) return;
+
+    videos = videos
+        .where((video) => video.id != videoId)
+        .toList(growable: false);
+    notifyListeners();
+  }
 
   Future<void> toggleFavorite(String videoId) async {
     if (_pendingFavoriteUpdates.contains(videoId)) return;

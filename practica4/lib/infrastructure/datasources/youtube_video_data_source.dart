@@ -11,10 +11,10 @@ class YouTubeVideoDataSource implements VideoPostDataSource {
   YouTubeVideoDataSource({
     AppConfig? config,
     http.Client? client,
-    this.maxPages = 5,
+    this.maxPages,
   }) : _config = config ?? AppConfig.instance,
        _client = client ?? http.Client() {
-    assert(maxPages > 0);
+    assert(maxPages == null || maxPages! > 0);
   }
 
   static final Uri _endpoint = Uri.https(
@@ -27,7 +27,7 @@ class YouTubeVideoDataSource implements VideoPostDataSource {
 
   final AppConfig _config;
   final http.Client _client;
-  final int maxPages;
+  final int? maxPages;
 
   @override
   Future<List<VideoPost>> getVideoPosts() async {
@@ -41,9 +41,10 @@ class YouTubeVideoDataSource implements VideoPostDataSource {
     }
 
     final videos = <VideoPost>[];
+    final requestedPageTokens = <String>{};
     String? pageToken;
 
-    for (var page = 0; page < maxPages; page++) {
+    for (var page = 0; maxPages == null || page < maxPages!; page++) {
       final query = <String, String>{
         'part': 'snippet,contentDetails',
         'maxResults': '50',
@@ -70,6 +71,13 @@ class YouTubeVideoDataSource implements VideoPostDataSource {
 
       final nextPageToken = payload['nextPageToken'];
       if (nextPageToken is! String || nextPageToken.isEmpty) break;
+      if (!requestedPageTokens.add(nextPageToken)) {
+        throw const VideoSourceApiException(
+          _sourceName,
+          'The playlist response repeated a page token.',
+          kind: VideoSourceFailureKind.invalidResponse,
+        );
+      }
       pageToken = nextPageToken;
     }
 
@@ -97,12 +105,12 @@ class YouTubeVideoDataSource implements VideoPostDataSource {
     if (response.statusCode < 200 || response.statusCode >= 300) {
       final reason = _youtubeErrorReason(response.body);
       final kind = switch (reason) {
-        'quotaExceeded' || 'dailyLimitExceeded' =>
-          VideoSourceFailureKind.quotaExceeded,
-        'keyInvalid' || 'ipRefererBlocked' =>
-          VideoSourceFailureKind.authentication,
-        'playlistNotFound' || 'forbidden' =>
-          VideoSourceFailureKind.accessDenied,
+        'quotaExceeded' ||
+        'dailyLimitExceeded' => VideoSourceFailureKind.quotaExceeded,
+        'keyInvalid' ||
+        'ipRefererBlocked' => VideoSourceFailureKind.authentication,
+        'playlistNotFound' ||
+        'forbidden' => VideoSourceFailureKind.accessDenied,
         _ when response.statusCode == 403 =>
           VideoSourceFailureKind.accessDenied,
         _ => VideoSourceFailureKind.http,
@@ -110,8 +118,7 @@ class YouTubeVideoDataSource implements VideoPostDataSource {
       final message = switch (kind) {
         VideoSourceFailureKind.quotaExceeded =>
           'YouTube API quota has been exceeded.',
-        VideoSourceFailureKind.authentication =>
-          'YouTube rejected the API key. Check its validity and API restrictions.',
+        VideoSourceFailureKind.authentication => 'YouTube rejected the API key. Check its validity and API restrictions.',
         VideoSourceFailureKind.accessDenied =>
           'YouTube denied access to the playlist or API request.',
         _ => 'YouTube returned HTTP ${response.statusCode}.',
@@ -132,7 +139,8 @@ class YouTubeVideoDataSource implements VideoPostDataSource {
     final snippet = jsonObject(item?['snippet']);
     final contentDetails = jsonObject(item?['contentDetails']);
     final resourceId = jsonObject(snippet?['resourceId']);
-    final videoId = _nonEmptyString(contentDetails?['videoId']) ??
+    final videoId =
+        _nonEmptyString(contentDetails?['videoId']) ??
         _nonEmptyString(resourceId?['videoId']);
     final title = _nonEmptyString(snippet?['title']);
 
@@ -151,7 +159,8 @@ class YouTubeVideoDataSource implements VideoPostDataSource {
       source: VideoSourceType.youtube,
       providerId: videoId,
       thumbnailUrl: _bestThumbnail(snippet?['thumbnails']),
-      attribution: _nonEmptyString(snippet?['videoOwnerChannelTitle']) ??
+      attribution:
+          _nonEmptyString(snippet?['videoOwnerChannelTitle']) ??
           _nonEmptyString(snippet?['channelTitle']),
     );
   }

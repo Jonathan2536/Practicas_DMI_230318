@@ -196,12 +196,29 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
 
     final hasError = controller.value.hasError;
     if (hasError) {
+      final errorDescription = controller.value.errorDescription;
       developer.log(
         'Video player reported an error for ${widget.videoPost.source.name}: '
-        '${controller.value.errorDescription ?? "unknown playback error"}.',
+        '${errorDescription ?? "unknown playback error"}.',
         name: 'FullScreenPlayer',
         level: 1000,
       );
+      if (isUnsupportedVideoFormatError(errorDescription)) {
+        debugPrint(
+          '[Playback] skipping unsupported ${widget.videoPost.source.name} '
+          'video ${widget.videoPost.id}',
+        );
+        developer.log(
+          'Skipping video with an unsupported decoder format: '
+          '${widget.videoPost.id}.',
+          name: 'FullScreenPlayer',
+          level: 900,
+        );
+        context.read<DiscoverProvider>().excludeUnsupportedVideo(
+          widget.videoPost.id,
+        );
+        return;
+      }
       _setError(_videoUnavailableMessage, _generation);
       return;
     }
@@ -232,7 +249,12 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
         enableCaption: true,
       ),
       onWebResourceError: (error) {
-        debugPrint('[YT] WebView resource error: $error');
+        if (!youtubeWebResourceErrorIsFatal(error)) return;
+        final host = Uri.tryParse(error.url ?? '')?.host ?? 'unknown';
+        debugPrint(
+          '[YT] WebView main-frame error: '
+          'code=${error.errorCode}, type=${error.errorType}, host=$host',
+        );
         _setError(_videoUnavailableMessage, generation);
       },
     );
@@ -717,9 +739,7 @@ class _FullScreenPlayerState extends State<FullScreenPlayer> {
       try {
         await _PlaybackCoordinator.deactivate(
           youtubeController,
-          pause: youtubeWasReady
-              ? youtubeController.pauseVideo
-              : () async {},
+          pause: youtubeWasReady ? youtubeController.pauseVideo : () async {},
         );
       } catch (error, stackTrace) {
         developer.log(

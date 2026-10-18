@@ -1,4 +1,5 @@
 import 'package:practica4/domain/entities/video_post.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 final RegExp _youtubeIdPattern = RegExp(r'^[A-Za-z0-9_-]{11}$');
 
@@ -42,3 +43,6 @@ String youtubeErrorMessageForCode(int code) => switch (code) {
     'El propietario no permite reproducir este video dentro de la aplicación.',
   _ => 'YouTube no pudo reproducir este video (error $code).',
 };
+
+bool youtubeWebResourceErrorIsFatal(WebResourceError error) =>
+    error.isForMainFrame == true;

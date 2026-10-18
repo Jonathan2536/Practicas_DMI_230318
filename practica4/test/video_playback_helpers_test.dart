@@ -12,4 +12,28 @@ void main() {
   test('Vimeo starts muted for embedded autoplay compatibility', () {
     expect(videoStartsMuted(VideoSourceType.vimeo), isTrue);
   });
+
+  test(
+    'identifies unsupported decoder formats without matching network errors',
+    () {
+      expect(
+        isUnsupportedVideoFormatError(
+          'DecoderInitializationException: '
+          'format_supported=NO_EXCEEDS_CAPABILITIES',
+        ),
+        isTrue,
+      );
+      expect(
+        isUnsupportedVideoFormatError(
+          'ExoPlaybackException: ERROR_CODE_DECODING_FORMAT_UNSUPPORTED',
+        ),
+        isTrue,
+      );
+      expect(
+        isUnsupportedVideoFormatError('HttpDataSourceException: 404 Not Found'),
+        isFalse,
+      );
+      expect(isUnsupportedVideoFormatError(null), isFalse);
+    },
+  );
 }

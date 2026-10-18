@@ -11,8 +11,8 @@ class PixabayVideoDataSource implements VideoPostDataSource {
     AppConfig? config,
     http.Client? client,
     this.searchTerms = 'nature vertical',
-    this.perPage = 20,
-    this.cacheDuration = const Duration(minutes: 30),
+    this.perPage = 200,
+    this.cacheDuration = const Duration(hours: 24),
     DateTime Function()? clock,
   }) : _config = config ?? AppConfig.instance,
        _client = client ?? http.Client(),
@@ -25,6 +25,7 @@ class PixabayVideoDataSource implements VideoPostDataSource {
   static final Uri _endpoint = Uri.https('pixabay.com', '/api/videos/');
   static const _sourceName = 'Pixabay';
   static const _requestTimeout = Duration(seconds: 15);
+  static const _maxResultsPerSearch = 500;
 
   final AppConfig _config;
   final http.Client _client;
@@ -67,11 +68,52 @@ class PixabayVideoDataSource implements VideoPostDataSource {
       throw UnconfiguredVideoDataSourceException(_sourceName, error.message);
     }
 
+    final candidates = <_PixabayCandidate>[];
+    final firstPage = await _requestPage(apiKey, 1);
+    final firstVideos = firstPage['hits'] ?? firstPage['videos'];
+    final firstTotalHits = _totalHits(firstPage);
+    var index = 0;
+    for (final value in firstVideos) {
+      final candidate = _mapVideo(value, index++);
+      if (candidate != null) candidates.add(candidate);
+    }
+
+    if (firstTotalHits != null) {
+      final resultCount = firstTotalHits.clamp(0, _maxResultsPerSearch);
+      final pageCount = (resultCount + perPage - 1) ~/ perPage;
+      for (var page = 2; page <= pageCount; page++) {
+        final payload = await _requestPage(apiKey, page);
+        final pageVideos = payload['hits'] ?? payload['videos'];
+        for (final value in pageVideos) {
+          final candidate = _mapVideo(value, index++);
+          if (candidate != null) candidates.add(candidate);
+        }
+      }
+    }
+    candidates.sort((first, second) {
+      final portraitComparison = (second.isPortrait ? 1 : 0).compareTo(
+        first.isPortrait ? 1 : 0,
+      );
+      return portraitComparison != 0
+          ? portraitComparison
+          : first.index.compareTo(second.index);
+    });
+
+    final videos = List<VideoPost>.unmodifiable(
+      candidates.map((candidate) => candidate.video),
+    );
+    _cachedVideos = videos;
+    _cachedAt = _clock();
+    return videos;
+  }
+
+  Future<Map<String, dynamic>> _requestPage(String apiKey, int page) async {
     final uri = _endpoint.replace(
       queryParameters: {
         'key': apiKey,
         'q': searchTerms,
         'per_page': '$perPage',
+        'page': '$page',
         'safesearch': 'true',
       },
     );
@@ -125,27 +167,21 @@ class PixabayVideoDataSource implements VideoPostDataSource {
         kind: VideoSourceFailureKind.invalidResponse,
       );
     }
+    return payload;
+  }
 
-    final candidates = <_PixabayCandidate>[];
-    for (var index = 0; index < responseVideos.length; index++) {
-      final candidate = _mapVideo(responseVideos[index], index);
-      if (candidate != null) candidates.add(candidate);
-    }
-    candidates.sort((first, second) {
-      final portraitComparison = (second.isPortrait ? 1 : 0).compareTo(
-        first.isPortrait ? 1 : 0,
+  int? _totalHits(Map<String, dynamic> payload) {
+    final value = payload['totalHits'];
+    if (value == null) return null;
+    final parsed = value is int ? value : int.tryParse('$value');
+    if (parsed == null || parsed < 0) {
+      throw const VideoSourceApiException(
+        _sourceName,
+        'Pixabay returned an invalid totalHits value.',
+        kind: VideoSourceFailureKind.invalidResponse,
       );
-      return portraitComparison != 0
-          ? portraitComparison
-          : first.index.compareTo(second.index);
-    });
-
-    final videos = List<VideoPost>.unmodifiable(
-      candidates.map((candidate) => candidate.video),
-    );
-    _cachedVideos = videos;
-    _cachedAt = _clock();
-    return videos;
+    }
+    return parsed;
   }
 
   _PixabayCandidate? _mapVideo(Object? value, int index) {

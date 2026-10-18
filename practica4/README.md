@@ -38,18 +38,26 @@ The app combines these video sources:
 
 - `LocalVideoPostDataSource` maps the existing `videoPosts` records. Despite
   the source name, these are remote Google Drive videos, not bundled assets.
-  All nine configured URLs currently use the direct-download form
-  `drive.google.com/uc?export=download&id=...`. A diagnostic HTTP range request
-  to each returned `206 Partial Content` with `video/mp4`; this confirms the
-  current URLs serve video data from this environment, but does not guarantee
-  future availability or successful decoding on every Android device. The
+  The eight configured URLs use the direct-download form
+  `drive.google.com/uc?export=download&id=...`. The original first clip was
+  removed because the Xiaomi 23129RA5FL rejected its 2160x3840 H.264 High
+  Profile stream (`NO_EXCEEDS_CAPABILITIES`). A diagnostic HTTP range request
+  to the remaining URLs returned `206 Partial Content` with `video/mp4`; this
+  confirms that they serve video data from this environment, but does not
+  guarantee future availability or successful decoding on every Android device.
+  If
+  Android reports a decoder initialization/format-capability failure, that
+  video is omitted from all feed sections for the current app session and the
+  feed advances to the next entry; transient network and other playback errors
+  remain retryable and do not remove the video. The
   first Drive clip initialized and played in the Pixel 10 emulator after a
   user tap; physical-device playback is still unverified. Chrome
   Flutter Web has also blocked Drive playback with `net::ERR_BLOCKED_BY_ORB`;
   use a media host that supports CORS and byte-range requests for the web build.
   Actual playback on an Android device still needs verification.
-- `YouTubeVideoDataSource` requests `playlistItems.list`, follows up to five
-  pages, ignores entries without usable video IDs, and maps title, description,
+- `YouTubeVideoDataSource` requests `playlistItems.list`, follows page tokens
+  until the playlist ends (or an optional page limit is configured), ignores
+  entries without usable video IDs, and maps title, description,
   channel, thumbnail and stable `youtube:<id>` identity. YouTube's API key and
   playlist ID are required. Playback uses the YouTube IFrame player; videos
   whose owners disable embedding may still fail. Playback starts unmuted; the
@@ -57,11 +65,13 @@ The app combines these video sources:
   See the [YouTube Data API
   playlistItems.list reference](https://developers.google.com/youtube/v3/docs/playlistItems/list).
 - `PixabayVideoDataSource` searches the configured default terms (`nature
-  vertical`), maps the API's `hits` collection (and accepts `videos` for
-  compatibility), excludes entries without a direct MP4 variant, prefers
-  portrait clips, and maps dimensions, duration, tags, thumbnail and
-  contributor/page attribution. Results are cached in memory for 30 minutes to
-  avoid repeat requests during rebuilds.
+  vertical`), requests up to 200 results per page and follows pagination up to
+  Pixabay's documented 500-result per-query API limit. It maps the API's
+  `hits` collection (and accepts `videos` for compatibility), excludes entries
+  without a direct MP4 variant, prefers portrait clips, and maps dimensions,
+  duration, tags, thumbnail and contributor/page attribution. Results are
+  cached in memory for 24 hours as required by the
+  [Pixabay API usage policy](https://pixabay.com/api/docs/).
 - `VimeoVideoDataSource` optionally accepts comma-separated public Vimeo page
   URLs in `VIMEO_VIDEO_URLS`, fetches title and thumbnail metadata from Vimeo's
   public oEmbed endpoint, and plays supported videos through the Vimeo embedded
