@@ -31,8 +31,12 @@ fails, successful sources remain available and the UI identifies the failed
 source; if every source fails, loading ends with a retry action. Instagram's
 placeholder is not registered as an active source.
 
-Seasonal selection currently affects the splash screen and Android launcher
-icon only. It does not filter, reorder, or reconfigure any video source.
+Seasonal selection affects the splash screen and Android launcher icon only. It
+does not filter, reorder, or reconfigure any video source. Select a season from
+the palette menu in Discover; the choice is saved and can be returned to
+`Automático (fecha del dispositivo)`. Keep Android's automatic date and time
+enabled: changing the device clock can make HTTPS certificate validation fail
+for YouTube and Pixabay even though their configuration is correct.
 
 The app combines these video sources:
 

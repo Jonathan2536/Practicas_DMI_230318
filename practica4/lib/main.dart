@@ -12,6 +12,7 @@ import 'package:practica4/infrastructure/datasources/youtube_video_data_source.d
 import 'package:practica4/infrastructure/repositories/video_post_repository_impl.dart';
 import 'package:practica4/infrastructure/services/shared_preferences_storage_service.dart';
 import 'package:practica4/presentation/providers/discover_provider.dart';
+import 'package:practica4/presentation/providers/seasonal_theme_provider.dart';
 import 'package:practica4/presentation/screens/discover/discover_screen.dart';
 import 'package:practica4/presentation/screens/splash/splash_screen.dart';
 
@@ -22,6 +23,8 @@ Future<void> main() async {
 
   final localStorage = SharedPreferencesStorageService();
   await localStorage.initialize();
+  final seasonalThemeProvider = SeasonalThemeProvider(localStorage);
+  await seasonalThemeProvider.initialize();
   final httpClient = http.Client();
   final videoRepository = VideoPostRepositoryImpl([
     LocalVideoPostDataSource(),
@@ -42,6 +45,7 @@ Future<void> main() async {
   runApp(
     MyApp(
       localStorage: localStorage,
+      seasonalThemeProvider: seasonalThemeProvider,
       videoRepository: videoRepository,
       httpClient: httpClient,
     ),
@@ -50,12 +54,14 @@ Future<void> main() async {
 
 class MyApp extends StatefulWidget {
   final LocalStorageService localStorage;
+  final SeasonalThemeProvider seasonalThemeProvider;
   final VideoPostRepository videoRepository;
   final http.Client httpClient;
 
   const MyApp({
     super.key,
     required this.localStorage,
+    required this.seasonalThemeProvider,
     required this.videoRepository,
     required this.httpClient,
   });
@@ -77,6 +83,9 @@ class _MyAppState extends State<MyApp> {
       providers: [
         Provider<LocalStorageService>.value(value: widget.localStorage),
         Provider<VideoPostRepository>.value(value: widget.videoRepository),
+        ChangeNotifierProvider<SeasonalThemeProvider>.value(
+          value: widget.seasonalThemeProvider,
+        ),
         ChangeNotifierProvider(
           lazy: false,
           create: (context) => DiscoverProvider(

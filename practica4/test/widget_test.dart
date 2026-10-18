@@ -10,7 +10,9 @@ import 'package:practica4/infrastructure/models/local_video_model.dart';
 import 'package:practica4/infrastructure/repositories/video_post_repository_impl.dart';
 import 'package:practica4/infrastructure/services/shared_preferences_storage_service.dart';
 import 'package:practica4/presentation/providers/discover_provider.dart';
+import 'package:practica4/presentation/providers/seasonal_theme_provider.dart';
 import 'package:practica4/presentation/screens/discover/discover_screen.dart';
+import 'package:practica4/presentation/screens/splash/seasonal_theme.dart';
 import 'package:practica4/presentation/widgets/shared/video_buttons.dart';
 import 'package:practica4/presentation/widgets/video/fullscreen_player.dart';
 import 'package:practica4/presentation/widgets/video/video_caption.dart';
@@ -30,11 +32,18 @@ DiscoverProvider createDiscoverProvider(LocalStorageService storage) {
 
 void main() {
   late SharedPreferencesStorageService storage;
+  late SeasonalThemeProvider seasonalThemeProvider;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
     storage = SharedPreferencesStorageService();
     await storage.initialize();
+    seasonalThemeProvider = SeasonalThemeProvider(
+      storage,
+      clock: () => DateTime(2026, 10, 31),
+    );
+    await seasonalThemeProvider.initialize();
+    addTearDown(seasonalThemeProvider.dispose);
   });
 
   test('loads the initial video posts', () async {
@@ -97,8 +106,13 @@ void main() {
     await provider.loadNextPage();
 
     await tester.pumpWidget(
-      ChangeNotifierProvider<DiscoverProvider>.value(
-        value: provider,
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<DiscoverProvider>.value(value: provider),
+          ChangeNotifierProvider<SeasonalThemeProvider>.value(
+            value: seasonalThemeProvider,
+          ),
+        ],
         child: const MaterialApp(home: DiscoverScreen()),
       ),
     );
@@ -109,6 +123,38 @@ void main() {
 
     expect(find.text('Reintentar'), findsNothing);
     expect(find.text('No hay videos disponibles'), findsOneWidget);
+  });
+
+  testWidgets('lets users choose a season without changing device date', (
+    tester,
+  ) async {
+    final provider = DiscoverProvider(_EmptyVideoRepository(), storage);
+    await provider.loadNextPage();
+    addTearDown(provider.dispose);
+
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<DiscoverProvider>.value(value: provider),
+          ChangeNotifierProvider<SeasonalThemeProvider>.value(
+            value: seasonalThemeProvider,
+          ),
+        ],
+        child: const MaterialApp(home: DiscoverScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Seleccionar temporada'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Navidad'));
+    await tester.pump();
+
+    expect(seasonalThemeProvider.selectedOverride, SeasonalTheme.christmas);
+    expect(
+      await storage.getString('seasonal_theme_override'),
+      SeasonalTheme.christmas.launcherIconTheme,
+    );
   });
 
   test(
@@ -280,8 +326,13 @@ void main() {
     addTearDown(provider.dispose);
 
     await tester.pumpWidget(
-      ChangeNotifierProvider<DiscoverProvider>.value(
-        value: provider,
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<DiscoverProvider>.value(value: provider),
+          ChangeNotifierProvider<SeasonalThemeProvider>.value(
+            value: seasonalThemeProvider,
+          ),
+        ],
         child: MaterialApp(
           theme: ThemeData(brightness: Brightness.dark),
           home: const DiscoverScreen(),

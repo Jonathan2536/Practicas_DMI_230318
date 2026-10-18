@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:practica4/domain/entities/video_post.dart';
 import 'package:practica4/presentation/providers/discover_provider.dart';
+import 'package:practica4/presentation/providers/seasonal_theme_provider.dart';
+import 'package:practica4/presentation/screens/splash/seasonal_theme.dart';
+import 'package:practica4/presentation/screens/splash/splash_screen.dart';
 import 'package:practica4/presentation/widgets/shared/video_scrollable_view.dart';
 
 class DiscoverScreen extends StatefulWidget {
@@ -31,9 +36,46 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     );
   }
 
+  Future<void> _selectSeason(String id) async {
+    final seasonalThemeProvider = context.read<SeasonalThemeProvider>();
+    final theme = id == 'auto' ? null : SeasonalTheme.fromId(id);
+    if (id != 'auto' && theme == null) {
+      throw ArgumentError.value(id, 'id', 'Unknown seasonal theme.');
+    }
+    if (seasonalThemeProvider.selectedOverride == theme) return;
+
+    try {
+      await seasonalThemeProvider.selectTheme(theme);
+      if (!mounted) return;
+      unawaited(context.read<DiscoverProvider>().loadNextPage());
+      unawaited(
+        Navigator.of(context).pushReplacement<void, void>(
+          MaterialPageRoute<void>(
+            builder: (_) => const SplashScreen(destination: DiscoverScreen()),
+          ),
+        ),
+      );
+    } on Object catch (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'TokTik seasonal theme selector',
+        ),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No se pudo guardar la temporada seleccionada.'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final discoverProvider = context.watch<DiscoverProvider>();
+    final seasonalThemeProvider = context.watch<SeasonalThemeProvider>();
 
     if (discoverProvider.initialLoading) {
       return const Scaffold(
@@ -81,7 +123,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                 content: Text(
                   'No se pudieron cargar: '
                   '${discoverProvider.sourceFailures.map((failure) => failure.source).join(', ')}. '
-                  'Revisa la conexión y configuración.',
+                  'Comprueba la conexión, configuración y que fecha y hora '
+                  'automáticas estén activadas en Android.',
                 ),
                 actions: [
                   TextButton(
@@ -111,57 +154,97 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                     child: Row(
-                      children: List.generate(_sections.length, (index) {
-                        final isSelected = index == _selectedSection;
+                      children: [
+                        ...List.generate(_sections.length, (index) {
+                          final isSelected = index == _selectedSection;
 
-                        return Expanded(
-                          child: Semantics(
-                            key: ValueKey(
-                              'section-semantic-${_sections[index]}',
-                            ),
-                            button: true,
-                            selected: isSelected,
-                            child: InkWell(
-                              key: ValueKey('section-tab-${_sections[index]}'),
-                              borderRadius: BorderRadius.circular(24),
-                              onTap: () => _selectSection(index),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                  horizontal: 4,
+                          return Expanded(
+                            child: Semantics(
+                              key: ValueKey(
+                                'section-semantic-${_sections[index]}',
+                              ),
+                              button: true,
+                              selected: isSelected,
+                              child: InkWell(
+                                key: ValueKey(
+                                  'section-tab-${_sections[index]}',
                                 ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      _sections[index],
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: isSelected
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
+                                borderRadius: BorderRadius.circular(24),
+                                onTap: () => _selectSection(index),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                    horizontal: 4,
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        _sections[index],
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: isSelected
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 6),
-                                    AnimatedContainer(
-                                      duration: const Duration(
-                                        milliseconds: 180,
+                                      const SizedBox(height: 6),
+                                      AnimatedContainer(
+                                        duration: const Duration(
+                                          milliseconds: 180,
+                                        ),
+                                        height: 3,
+                                        width: isSelected ? 32 : 0,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            2,
+                                          ),
+                                        ),
                                       ),
-                                      height: 3,
-                                      width: isSelected ? 32 : 0,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
+                          );
+                        }),
+                        PopupMenuButton<String>(
+                          tooltip: 'Seleccionar temporada',
+                          onSelected: (id) => _selectSeason(id),
+                          itemBuilder: (context) => [
+                            CheckedPopupMenuItem<String>(
+                              value: 'auto',
+                              checked:
+                                  seasonalThemeProvider.selectedOverride ==
+                                  null,
+                              child: const Text(
+                                'Automático (fecha del dispositivo)',
+                              ),
+                            ),
+                            ...SeasonalTheme.values.map(
+                              (theme) => CheckedPopupMenuItem<String>(
+                                value: theme.launcherIconTheme,
+                                checked:
+                                    seasonalThemeProvider.selectedOverride ==
+                                    theme,
+                                child: Text(theme.name),
+                              ),
+                            ),
+                            const PopupMenuItem<String>(
+                              enabled: false,
+                              child: Text(
+                                'Mantén fecha y hora automáticas para HTTPS.',
+                              ),
+                            ),
+                          ],
+                          icon: const Icon(
+                            Icons.palette_outlined,
+                            color: Colors.white,
                           ),
-                        );
-                      }),
+                        ),
+                      ],
                     ),
                   ),
                 ),

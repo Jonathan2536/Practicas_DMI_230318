@@ -4,6 +4,8 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:practica4/presentation/providers/seasonal_theme_provider.dart';
 import 'package:practica4/presentation/screens/splash/seasonal_theme.dart';
 
 const _launcherIconChannel = MethodChannel('practica4/seasonal_launcher_icon');
@@ -32,7 +34,9 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _theme = SeasonalTheme.forDate(widget.now());
+    _theme =
+        context.read<SeasonalThemeProvider?>()?.currentTheme ??
+        SeasonalTheme.forDate(widget.now());
     _audioPlayer = AudioPlayer();
     unawaited(_updateLauncherIcon());
     unawaited(_playWelcomeAudio());

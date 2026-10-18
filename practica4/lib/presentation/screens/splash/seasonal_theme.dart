@@ -53,6 +53,15 @@ final class SeasonalTheme {
     accentColor: Color(0xFFFF718B),
   );
 
+  static const values = [normal, halloween, christmas, valentine];
+
+  static SeasonalTheme? fromId(String id) {
+    for (final theme in values) {
+      if (theme.launcherIconTheme == id) return theme;
+    }
+    return null;
+  }
+
   static SeasonalTheme forDate(DateTime date) {
     if ((date.month == 10 && date.day >= 20) ||
         (date.month == 11 && date.day <= 3)) {
