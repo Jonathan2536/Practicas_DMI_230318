@@ -1,0 +1,163 @@
+{
+    "schema_version":  1,
+    "diagram_type":  "architecture",
+    "meta":  {
+                 "title":  "TokTik: arquitectura de video",
+                 "quality_profile":  "showcase"
+             },
+    "layout":  {
+                   "mode":  "grid",
+                   "origin":  [
+                                  80,
+                                  100
+                              ],
+                   "cols":  4,
+                   "gapX":  80,
+                   "gapY":  140,
+                   "cellW":  210,
+                   "cellH":  80
+               },
+    "components":  [
+                       {
+                           "id":  "ui",
+                           "type":  "frontend",
+                           "label":  "DiscoverScreen",
+                           "sublabel":  "3 secciones",
+                           "row":  0,
+                           "col":  0
+                       },
+                       {
+                           "id":  "feed",
+                           "type":  "frontend",
+                           "label":  "VideoScrollableView",
+                           "sublabel":  "vertical PageView",
+                           "row":  1,
+                           "col":  0
+                       },
+                       {
+                           "id":  "provider",
+                           "type":  "backend",
+                           "label":  "DiscoverProvider",
+                           "sublabel":  "estado y acciones",
+                           "row":  0,
+                           "col":  1
+                       },
+                       {
+                           "id":  "repo",
+                           "type":  "backend",
+                           "label":  "VideoPostRepository",
+                           "sublabel":  "contrato + implementacion",
+                           "row":  0,
+                           "col":  2
+                       },
+                       {
+                           "id":  "sources",
+                           "type":  "backend",
+                           "label":  "Fuentes de video",
+                           "sublabel":  "4 fuentes activas",
+                           "row":  0,
+                           "col":  3
+                       },
+                       {
+                           "id":  "entity",
+                           "type":  "backend",
+                           "label":  "VideoPost",
+                           "sublabel":  "entidad comun del feed",
+                           "row":  1,
+                           "col":  2
+                       },
+                       {
+                           "id":  "player",
+                           "type":  "cloud",
+                           "label":  "FullScreenPlayer",
+                           "sublabel":  "red y reproductores embed",
+                           "row":  1,
+                           "col":  1
+                       },
+                       {
+                           "id":  "external",
+                           "type":  "external",
+                           "label":  "Servicios externos",
+                           "sublabel":  "hosts remotos de video",
+                           "row":  1,
+                           "col":  3
+                       }
+                   ],
+    "connections":  [
+                        {
+                            "id":  "ui-provider",
+                            "from":  "ui",
+                            "to":  "provider"
+                        },
+                        {
+                            "id":  "provider-repo",
+                            "from":  "provider",
+                            "to":  "repo"
+                        },
+                        {
+                            "id":  "repo-source-call",
+                            "from":  "repo",
+                            "to":  "sources"
+                        },
+                        {
+                            "id":  "source-repo-result",
+                            "from":  "sources",
+                            "to":  "repo"
+                        },
+                        {
+                            "id":  "repo-entity",
+                            "from":  "repo",
+                            "to":  "entity"
+                        },
+                        {
+                            "id":  "ui-feed",
+                            "from":  "ui",
+                            "to":  "feed"
+                        },
+                        {
+                            "id":  "feed-player",
+                            "from":  "feed",
+                            "to":  "player"
+                        },
+                        {
+                            "id":  "source-external",
+                            "from":  "sources",
+                            "to":  "external",
+                            "variant":  "dashed"
+                        },
+                        {
+                            "id":  "repo-provider-result",
+                            "from":  "repo",
+                            "to":  "provider"
+                        }
+                    ],
+    "cards":  [
+                  {
+                      "dot":  "cyan",
+                      "title":  "Carga del feed",
+                      "items":  [
+                                    "main.dart registra LocalVideoPostDataSource, YouTubeVideoDataSource, PixabayVideoDataSource y VimeoVideoDataSource.",
+                                    "VideoPostRepositoryImpl consulta las fuentes en paralelo, intercala resultados, deduplica por id e informa fallos parciales.",
+                                    "Lanza VideoDataSourcesException solo si todas las fuentes fallan y no hay videos."
+                                ]
+                  },
+                  {
+                      "dot":  "emerald",
+                      "title":  "Estado de las secciones",
+                      "items":  [
+                                    "DiscoverProvider expone initialLoading, videos, loadError y sourceFailures.",
+                                    "For You ordena por vistas y likes; Favorites filtra isFavorite.",
+                                    "DiscoverScreen navega horizontalmente; cada seccion se desplaza verticalmente."
+                                ]
+                  },
+                  {
+                      "dot":  "rose",
+                      "title":  "Metadatos y reproduccion",
+                      "items":  [
+                                    "La fuente Local lee registros Dart cuyo videoUrl es una URL remota de Google Drive; no lee archivos del dispositivo.",
+                                    "FullScreenPlayer usa VideoPlayerController para URLs directas, YouTube IFrame para YouTube y WebView para Vimeo.",
+                                    "InstagramVideoDataSource y GoogleDriveVideoDataSource existen, pero no estan registradas. .env.example deja vacias las claves de YouTube/Pixabay y las URLs de Vimeo."
+                                ]
+                  }
+              ]
+}

@@ -1,0 +1,255 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Arquitectura del Provider local y persistencia de datos",
+    "quality_profile": "showcase",
+    "viewBox": [
+      1340,
+      650
+    ],
+    "legend": {
+      "mode": "all",
+      "entries": {
+        "frontend": {
+          "label": "Presentacion / estado"
+        },
+        "database": {
+          "label": "Almacenamiento local"
+        },
+        "backend": {
+          "label": "Dispositivo / reproductor"
+        }
+      }
+    },
+    "subtitle": "Flujo del estado en memoria y su persistencia local en el dispositivo."
+  },
+  "components": [
+    {
+      "id": "ui",
+      "type": "frontend",
+      "label": "Pantallas y widgets",
+      "sublabel": "DiscoverScreen / VideoButtons",
+      "pos": [
+        55,
+        365
+      ],
+      "size": [
+        203,
+        100
+      ]
+    },
+    {
+      "id": "likes",
+      "type": "frontend",
+      "label": "Me gusta",
+      "sublabel": "Count +1 / -1",
+      "pos": [
+        55,
+        150
+      ],
+      "size": [
+        133,
+        78
+      ]
+    },
+    {
+      "id": "favorites",
+      "type": "frontend",
+      "label": "Favoritos",
+      "sublabel": "Bookmark icon",
+      "pos": [
+        55,
+        255
+      ],
+      "size": [
+        133,
+        78
+      ]
+    },
+    {
+      "id": "sound",
+      "type": "frontend",
+      "label": "Control de sonido",
+      "sublabel": "Control temporal",
+      "pos": [
+        55,
+        45
+      ],
+      "size": [
+        156,
+        78
+      ]
+    },
+    {
+      "id": "season",
+      "type": "frontend",
+      "label": "Selector de temporada",
+      "sublabel": "Manual / automatic",
+      "pos": [
+        55,
+        485
+      ],
+      "size": [
+        179,
+        86
+      ]
+    },
+    {
+      "id": "discover",
+      "type": "backend",
+      "label": "DiscoverProvider",
+      "sublabel": "ChangeNotifier / video state",
+      "pos": [
+        413,
+        205
+      ],
+      "size": [
+        195,
+        105
+      ]
+    },
+    {
+      "id": "theme",
+      "type": "backend",
+      "label": "SeasonalThemeProvider",
+      "sublabel": "ChangeNotifier / theme selection",
+      "pos": [
+        413,
+        485
+      ],
+      "size": [
+        195,
+        105
+      ]
+    },
+    {
+      "id": "storage_api",
+      "type": "backend",
+      "label": "LocalStorageService",
+      "sublabel": "Interfaz de almacenamiento",
+      "pos": [
+        764,
+        280
+      ],
+      "size": [
+        179,
+        95
+      ]
+    },
+    {
+      "id": "prefs",
+      "type": "database",
+      "label": "SharedPreferences",
+      "sublabel": "Device key-value storage",
+      "pos": [
+        1069,
+        280
+      ],
+      "size": [
+        195,
+        95
+      ]
+    },
+    {
+      "id": "date",
+      "type": "backend",
+      "label": "Fecha del dispositivo",
+      "sublabel": "DateTime.now() / forDate()",
+      "pos": [
+        764,
+        500
+      ],
+      "size": [
+        179,
+        85
+      ]
+    },
+    {
+      "id": "player",
+      "type": "backend",
+      "label": "Reproductor de video",
+      "sublabel": "Volumen solo en memoria",
+      "pos": [
+        413,
+        45
+      ],
+      "size": [
+        195,
+        85
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "likes-action",
+      "from": "likes",
+      "to": "discover",
+      "label": "Tap: toggleLike(videoId)",
+      "labelDy": -26
+    },
+    {
+      "id": "favorites-action",
+      "from": "favorites",
+      "to": "discover"
+    },
+    {
+      "id": "ui-state",
+      "from": "ui",
+      "to": "discover"
+    },
+    {
+      "id": "discover-read",
+      "from": "discover",
+      "to": "storage_api"
+    },
+    {
+      "id": "discover-write",
+      "from": "discover",
+      "to": "storage_api"
+    },
+    {
+      "id": "storage-adapter",
+      "from": "storage_api",
+      "to": "prefs",
+      "label": "Adaptador SharedPreferences",
+      "labelDy": -107
+    },
+    {
+      "id": "season-action",
+      "from": "season",
+      "to": "theme"
+    },
+    {
+      "id": "theme-read",
+      "from": "theme",
+      "to": "storage_api"
+    },
+    {
+      "id": "theme-write",
+      "from": "theme",
+      "to": "storage_api"
+    },
+    {
+      "id": "date-input",
+      "from": "date",
+      "to": "theme",
+      "label": "Automatic theme by date",
+      "labelDy": 32
+    },
+    {
+      "id": "theme-notify",
+      "from": "theme",
+      "to": "ui",
+      "label": "notifyListeners: reflejar tema",
+      "variant": "dashed",
+      "labelDx": 15
+    },
+    {
+      "id": "sound-action",
+      "from": "sound",
+      "to": "player",
+      "label": "Alternar volumen en memoria"
+    }
+  ]
+}
