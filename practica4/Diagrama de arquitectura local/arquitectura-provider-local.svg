@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1160" viewBox="0 0 1800 1160" role="img" aria-labelledby="title desc">
+<title id="title">Arquitectura del Provider local y persistencia de datos</title>
+<desc id="desc">Diagrama en tres capas de la presentación TokTik, sus providers locales y SharedPreferences. Muestra las operaciones verificadas en el código fuente.</desc>
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#49647e"/></marker>
+  <marker id="arrowViolet" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#7158a6"/></marker>
+  <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#477d68"/></marker>
+  <style>
+    text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#233247}.title{font-size:31px;font-weight:700}.sub{font-size:15px;fill:#5b6b7f}.layer{font-size:17px;font-weight:700;letter-spacing:.4px;fill:#39536b}.h{font-size:18px;font-weight:700}.body{font-size:14px;fill:#40546a}.small{font-size:12.5px;fill:#50647a}.mono{font-family:Consolas,monospace;font-size:12.5px;fill:#40546a}.tag{font-size:11px;font-weight:700;letter-spacing:.6px}.edge{font-size:12.5px;font-weight:600;fill:#40546a}.card{fill:#fff;stroke:#c9d5e1;stroke-width:1.5}.presentation{fill:#f2f6fa;stroke:#d3dee8}.state{fill:#f5f2fb;stroke:#d9cfeb}.persist{fill:#f1f7f4;stroke:#cfe0d5}.line{fill:none;stroke:#49647e;stroke-width:2.3;marker-end:url(#arrow)}.lineV{fill:none;stroke:#7158a6;stroke-width:2.3;marker-end:url(#arrowViolet)}.lineG{fill:none;stroke:#477d68;stroke-width:2.3;marker-end:url(#arrowGreen)}.dash{stroke-dasharray:7 6}
+  </style>
+</defs>
+<rect width="1800" height="1160" fill="#f8fafc"/>
+<text x="70" y="62" class="title">Arquitectura del Provider local y persistencia de datos</text>
+<text x="70" y="91" class="sub">TokTik · Estado de interfaz en memoria y preferencias conservadas en el dispositivo</text>
+
+<!-- capas -->
+<rect x="55" y="128" width="500" height="790" rx="18" class="presentation"/>
+<rect x="650" y="128" width="565" height="790" rx="18" class="state"/>
+<rect x="1310" y="128" width="435" height="790" rx="18" class="persist"/>
+<text x="82" y="166" class="layer">1 · PRESENTACIÓN</text>
+<text x="677" y="166" class="layer">2 · GESTIÓN DE ESTADO</text>
+<text x="1337" y="166" class="layer">3 · PERSISTENCIA LOCAL</text>
+
+<!-- presentation cards -->
+<rect x="91" y="213" width="428" height="216" rx="13" class="card"/>
+<text x="116" y="250" class="h">Pantallas y widgets</text>
+<text x="116" y="280" class="body">DiscoverScreen · FullScreenPlayer</text>
+<text x="116" y="304" class="body">VideoButtons</text>
+<line x1="116" y1="325" x2="494" y2="325" stroke="#e1e8ef"/>
+<text x="116" y="352" class="body">Me gusta · Favoritos · Selector de temporada/tema</text>
+<text x="116" y="380" class="small">La interfaz observa los providers con Provider.</text>
+<text x="116" y="402" class="small">Los iconos y el contador representan el estado actual.</text>
+
+<rect x="91" y="486" width="428" height="139" rx="13" class="card"/>
+<text x="116" y="522" class="h">Control de sonido</text>
+<text x="116" y="550" class="body">FullScreenPlayer · _isMuted / volumen del controlador</text>
+<text x="116" y="578" class="small">Estado del reproductor; no se guarda en SharedPreferences.</text>
+<text x="116" y="602" class="small">La vista de video recibe el cambio de sonido.</text>
+
+<rect x="91" y="704" width="428" height="133" rx="13" class="card"/>
+<text x="116" y="741" class="h">Fecha del dispositivo</text>
+<text x="116" y="770" class="body">DateTime.now() → SeasonalTheme.forDate()</text>
+<text x="116" y="798" class="small">Determina el tema actual cuando no hay override manual.</text>
+
+<!-- state cards -->
+<rect x="690" y="213" width="485" height="287" rx="13" class="card"/>
+<text x="716" y="251" class="h">DiscoverProvider</text>
+<text x="716" y="276" class="tag" fill="#7158a6">ChangeNotifier</text>
+<text x="716" y="312" class="body">Likes · contador · favoritos</text>
+<line x1="716" y1="332" x2="1148" y2="332" stroke="#e5deef"/>
+<text x="716" y="362" class="body">Tap Me gusta: alterna isLiked</text>
+<text x="716" y="386" class="body">Activar: likes + 1 · Desmarcar: likes − 1</text>
+<text x="716" y="410" class="body">Tap Favoritos: alterna isFavorite</text>
+<text x="716" y="446" class="small">Actualiza el objeto VideoPost en memoria y notifica;</text>
+<text x="716" y="467" class="small">si falla la escritura, restaura el estado anterior.</text>
+
+<rect x="690" y="591" width="485" height="246" rx="13" class="card"/>
+<text x="716" y="630" class="h">SeasonalThemeProvider</text>
+<text x="716" y="655" class="tag" fill="#7158a6">ChangeNotifier</text>
+<text x="716" y="693" class="body">Selector manual → guarda override y notifica</text>
+<text x="716" y="721" class="body">Modo automático → elimina override guardado</text>
+<text x="716" y="758" class="small">currentTheme usa el override o calcula la temporada</text>
+<text x="716" y="779" class="small">por la fecha del dispositivo.</text>
+<text x="716" y="812" class="small">initialize() recupera la preferencia manual.</text>
+
+<!-- persistence cards -->
+<rect x="1350" y="360" width="355" height="165" rx="13" class="card"/>
+<text x="1377" y="399" class="h">LocalStorageService</text>
+<text x="1377" y="428" class="body">Contrato de almacenamiento</text>
+<text x="1377" y="456" class="small">getString / setString · getBool / setBool</text>
+<text x="1377" y="480" class="small">remove</text>
+
+<rect x="1350" y="601" width="355" height="177" rx="13" class="card"/>
+<text x="1377" y="640" class="h">SharedPreferences</text>
+<text x="1377" y="669" class="body">SharedPreferencesStorageService</text>
+<line x1="1377" y1="689" x2="1677" y2="689" stroke="#e1e9e3"/>
+<text x="1377" y="718" class="mono">video_like_&lt;id&gt;</text>
+<text x="1377" y="740" class="small">JSON: isLiked + likes</text>
+<text x="1377" y="762" class="mono">video_favorite_&lt;id&gt; · bool</text>
+<text x="1377" y="806" class="small">seasonal_theme_override · string</text>
+
+<!-- connections user actions -->
+<path d="M519 285 H690" class="lineV"/>
+<rect x="546" y="256" width="112" height="22" rx="6" fill="#f8fafc"/><text x="552" y="272" class="edge">Acción Me gusta</text>
+<path d="M519 344 H690" class="lineV"/>
+<rect x="546" y="316" width="114" height="22" rx="6" fill="#f8fafc"/><text x="552" y="332" class="edge">Acción Favoritos</text>
+<!-- state back to UI -->
+<path d="M690 461 H610 V442 H475 V429" class="lineV"/>
+<rect x="492" y="448" width="195" height="37" rx="6" fill="#f8fafc"/><text x="500" y="463" class="edge">notifyListeners → redibuja</text><text x="500" y="478" class="edge">icono y contador</text>
+<path d="M690 741 H615 V658 H548 V405 H519" class="lineV"/>
+<rect x="555" y="670" width="83" height="37" rx="6" fill="#f8fafc"/><text x="561" y="685" class="edge">Tema</text><text x="561" y="700" class="edge">notificado</text>
+<!-- sound local flow -->
+<path d="M305 429 V486" class="line"/>
+<rect x="318" y="443" width="151" height="22" rx="6" fill="#f8fafc"/><text x="323" y="459" class="edge">cambio en reproductor</text>
+<!-- date automatic theme -->
+<path d="M519 769 H620 V812 H690" class="line dash"/>
+<rect x="538" y="779" width="127" height="22" rx="6" fill="#f8fafc"/><text x="544" y="795" class="edge">cálculo automático</text>
+<!-- provider read/write to abstraction -->
+<path d="M1175 360 H1278 V420 H1350" class="lineG"/>
+<rect x="1192" y="333" width="154" height="22" rx="6" fill="#f8fafc"/><text x="1197" y="349" class="edge">Lee / escribe like</text>
+<path d="M1175 405 H1293 V464 H1350" class="lineG"/>
+<rect x="1192" y="439" width="154" height="22" rx="6" fill="#f8fafc"/><text x="1198" y="455" class="edge">Lee / escribe favorito</text>
+<path d="M1175 701 H1280 V486 H1350" class="lineG"/>
+<rect x="1190" y="673" width="157" height="22" rx="6" fill="#f8fafc"/><text x="1196" y="689" class="edge">Lee / guarda / elimina</text>
+<!-- abstraction implementation and persistence -->
+<path d="M1527 525 V601" class="lineG"/>
+<rect x="1541" y="548" width="137" height="38" rx="6" fill="#f8fafc"/><text x="1547" y="563" class="edge">Implementación</text><text x="1547" y="578" class="edge">SharedPreferences</text>
+
+<!-- footer explanation and legend -->
+<rect x="55" y="949" width="1690" height="157" rx="15" fill="#fff" stroke="#d7e0e9"/>
+<text x="82" y="985" class="h">Lectura del diagrama</text>
+<text x="82" y="1014" class="body">Likes: se persisten el booleano isLiked y el contador likes por video; el contador cambia junto con la acción y no es un contador remoto.</text>
+<text x="82" y="1038" class="body">Favoritos: se persiste un booleano por video. Temporada manual: se persiste el override; automática: se calcula por fecha y no se guarda.</text>
+<line x1="83" y1="1074" x2="141" y2="1074" class="lineV"/><text x="153" y="1079" class="small">Interacción / actualización y notificación de estado</text>
+<line x1="535" y1="1074" x2="593" y2="1074" class="lineG"/><text x="605" y="1079" class="small">Lectura / escritura en almacenamiento</text>
+<line x1="944" y1="1074" x2="1002" y2="1074" class="line dash"/><text x="1014" y="1079" class="small">Cálculo local automático</text>
+<text x="1370" y="1079" class="small">Basado en la implementación revisada del proyecto.</text>
+</svg>

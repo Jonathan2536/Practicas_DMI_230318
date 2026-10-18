@@ -1,0 +1,190 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1440" viewBox="0 0 2200 1440" role="img" aria-labelledby="title desc">
+<title id="title">TokTik — Arquitectura de Provider, Repository y múltiples DataSources de video</title>
+<desc id="desc">Vista de capas del flujo de carga de videos en TokTik desde la interfaz hasta cuatro fuentes registradas, el repositorio de resultados comunes y los reproductores.</desc>
+<defs>
+ <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#526b82"/></marker>
+ <marker id="g" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#4f8066"/></marker>
+ <marker id="v" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#755ea3"/></marker>
+ <style>
+ text{font-family:Inter,"Segoe UI",Arial,sans-serif;fill:#243448}.title{font-size:32px;font-weight:700}.sub{font-size:16px;fill:#5b6c80}.layer{font-size:17px;font-weight:700;letter-spacing:.5px;fill:#385269}.h{font-size:18px;font-weight:700}.body{font-size:14px;fill:#40546a}.small{font-size:12px;fill:#526579}.tiny{font-size:11px;fill:#526579}.tag{font-size:11px;font-weight:700;letter-spacing:.6px}.mono{font-family:Consolas,monospace;font-size:11.5px;fill:#3e5265}.edge{font-size:12px;font-weight:600;fill:#41566b}.panel{stroke-width:1.5}.card{fill:#fff;stroke:#cad5df;stroke-width:1.5}.p{fill:#f0f5fa;stroke:#d0dce7}.s{fill:#f4f1fa;stroke:#d9cfeb}.d{fill:#f5f7f9;stroke:#d3dce4}.i{fill:#eff6f1;stroke:#cddfd2}.x{fill:#fff8eb;stroke:#e6d6ae}.call{fill:none;stroke:#526b82;stroke-width:2.4;marker-end:url(#a)}.result{fill:none;stroke:#4f8066;stroke-width:2.4;marker-end:url(#g)}.dep{fill:none;stroke:#755ea3;stroke-width:1.8;stroke-dasharray:7 6;marker-end:url(#v)}.thin{fill:none;stroke:#9aaaba;stroke-width:1.4}
+ </style>
+</defs>
+<rect width="2200" height="1440" fill="#f8fafc"/>
+<text x="60" y="62" class="title">TokTik — Provider, Repository y múltiples DataSources de video</text>
+<text x="60" y="92" class="sub">Carga de metadatos → entidad común VideoPost → secciones del feed → reproductor elegido según la fuente</text>
+
+<!-- layer panels -->
+<rect x="45" y="130" width="410" height="930" rx="18" class="panel p"/>
+<rect x="485" y="130" width="360" height="930" rx="18" class="panel s"/>
+<rect x="875" y="130" width="365" height="930" rx="18" class="panel d"/>
+<rect x="1270" y="130" width="460" height="930" rx="18" class="panel i"/>
+<rect x="1760" y="130" width="395" height="930" rx="18" class="panel x"/>
+<text x="70" y="168" class="layer">PRESENTACIÓN</text>
+<text x="510" y="168" class="layer">PROVIDER</text>
+<text x="900" y="168" class="layer">CONTRATOS / ENTIDAD</text>
+<text x="1295" y="168" class="layer">INFRAESTRUCTURA</text>
+<text x="1785" y="168" class="layer">ORÍGENES / PLAYERS</text>
+
+<!-- presentation -->
+<rect x="75" y="220" width="350" height="178" rx="12" class="card"/>
+<text x="98" y="257" class="h">DiscoverScreen</text>
+<text x="98" y="285" class="body">Discover · For You · Favorites</text>
+<text x="98" y="310" class="small">Tres vistas sobre las listas del mismo Provider.</text>
+<text x="98" y="335" class="small">Reintento si no hay videos o falla una fuente.</text>
+<text x="98" y="365" class="mono">context.watch / context.read</text>
+<rect x="75" y="445" width="350" height="145" rx="12" class="card"/>
+<text x="98" y="482" class="h">_VideoSection</text>
+<text x="98" y="511" class="body">Recibe videos por sección</text>
+<text x="98" y="538" class="small">For You: ordena la lista completa.</text>
+<text x="98" y="561" class="small">Favorites: filtra por isFavorite.</text>
+<rect x="75" y="640" width="350" height="145" rx="12" class="card"/>
+<text x="98" y="677" class="h">VideoScrollableView</text>
+<text x="98" y="706" class="body">PageView vertical · video activo</text>
+<text x="98" y="733" class="small">Entrega el VideoPost activo al reproductor.</text>
+<text x="98" y="758" class="mono">FullScreenPlayer(videoPost)</text>
+<rect x="75" y="835" width="350" height="168" rx="12" class="card"/>
+<text x="98" y="872" class="h">FullScreenPlayer</text>
+<text x="98" y="901" class="small">YouTube → YouTubePlayer (IFrame)</text>
+<text x="98" y="926" class="small">Vimeo → embed en WebView</text>
+<text x="98" y="951" class="small">Directa → VideoPlayerController.networkUrl</text>
+<text x="98" y="977" class="tiny">La reproducción ocurre después de recibir metadatos.</text>
+
+<!-- provider -->
+<rect x="520" y="315" width="290" height="350" rx="13" class="card"/>
+<text x="545" y="355" class="h">DiscoverProvider</text>
+<text x="545" y="381" class="tag" fill="#755ea3">ChangeNotifier</text>
+<line x1="545" y1="399" x2="785" y2="399" stroke="#e6dfef"/>
+<text x="545" y="430" class="body">loadNextPage()</text>
+<text x="545" y="455" class="small">Solicita resultados al Repository.</text>
+<text x="545" y="490" class="body">Entrega estado a la UI:</text>
+<text x="545" y="516" class="small">videos · initialLoading</text>
+<text x="545" y="539" class="small">loadError · sourceFailures</text>
+<text x="545" y="578" class="small">forYouVideos · favoriteVideos</text>
+<text x="545" y="616" class="small">notifyListeners() en los cambios.</text>
+<text x="545" y="640" class="tiny">loadNextPage vuelve a cargar el conjunto completo.</text>
+
+<!-- domain contract / entity -->
+<rect x="905" y="245" width="305" height="134" rx="12" class="card"/>
+<text x="928" y="282" class="h">VideoPostRepository</text>
+<text x="928" y="309" class="mono">Future&lt;List&lt;VideoPost&gt;&gt;</text>
+<text x="928" y="337" class="small">Contrato · getVideoPosts()</text>
+<text x="928" y="359" class="tiny">Diagnostics: lastSourceFailures</text>
+<rect x="905" y="440" width="305" height="135" rx="12" class="card"/>
+<text x="928" y="477" class="h">VideoPostDataSource</text>
+<text x="928" y="505" class="mono">getVideoPosts()</text>
+<text x="928" y="532" class="small">Interfaz común de las 4 fuentes</text>
+<text x="928" y="555" class="tiny">Todas devuelven List&lt;VideoPost&gt;</text>
+<rect x="905" y="660" width="305" height="188" rx="12" class="card"/>
+<text x="928" y="697" class="h">VideoPost</text>
+<text x="928" y="725" class="small">Entidad común del feed</text>
+<text x="928" y="752" class="mono">id · caption · videoUrl · source</text>
+<text x="928" y="776" class="mono">providerId · thumbnailUrl · ...</text>
+<text x="928" y="814" class="tiny">No hay DTO externo común adicional.</text>
+
+<!-- datasources -->
+<rect x="1300" y="210" width="400" height="165" rx="12" class="card"/>
+<text x="1323" y="247" class="h">LocalVideoPostDataSource</text>
+<text x="1323" y="274" class="tag" fill="#4f8066">REGISTRADO EN main.dart</text>
+<text x="1323" y="306" class="small">videoPosts → LocalVideoModel.fromJson</text>
+<text x="1323" y="330" class="small">→ toVideoPostEntity() → VideoPost</text>
+<text x="1323" y="354" class="tiny">Datos Dart; videoUrl es URL remota de Drive.</text>
+<rect x="1300" y="405" width="400" height="165" rx="12" class="card"/>
+<text x="1323" y="442" class="h">YouTubeVideoDataSource</text>
+<text x="1323" y="469" class="tag" fill="#4f8066">REGISTRADO EN main.dart</text>
+<text x="1323" y="501" class="small">playlistItems.list · pageToken</text>
+<text x="1323" y="525" class="small">Mapea title, description, channel, thumbnail</text>
+<text x="1323" y="549" class="tiny">Crea VideoPost directamente; URL YouTube.</text>
+<rect x="1300" y="600" width="400" height="165" rx="12" class="card"/>
+<text x="1323" y="637" class="h">PixabayVideoDataSource</text>
+<text x="1323" y="664" class="tag" fill="#4f8066">REGISTRADO EN main.dart</text>
+<text x="1323" y="696" class="small">Búsqueda por término y páginas de resultados</text>
+<text x="1323" y="720" class="small">Selecciona URL MP4 · caché en memoria 24 h</text>
+<text x="1323" y="744" class="tiny">Crea VideoPost directamente.</text>
+<rect x="1300" y="795" width="400" height="165" rx="12" class="card"/>
+<text x="1323" y="832" class="h">VimeoVideoDataSource</text>
+<text x="1323" y="859" class="tag" fill="#4f8066">REGISTRADO EN main.dart</text>
+<text x="1323" y="891" class="small">URLs configuradas → endpoint público oEmbed</text>
+<text x="1323" y="915" class="small">Metadatos mapeados directamente a VideoPost</text>
+<text x="1323" y="939" class="tiny">Reproduce el URL Vimeo en WebView.</text>
+<rect x="1300" y="980" width="400" height="62" rx="12" class="card"/>
+<text x="1320" y="1007" class="h">VideoPostRepositoryImpl</text>
+<text x="1320" y="1028" class="tiny">infraestructura · concurrente · intercala · deduplica · conserva éxitos</text>
+
+<!-- external endpoints -->
+<rect x="1790" y="210" width="335" height="165" rx="12" class="card"/>
+<text x="1813" y="247" class="h">Datos de video</text>
+<text x="1813" y="279" class="body">videoPosts (Dart)</text>
+<text x="1813" y="307" class="small">8 registros incluidos en el código</text>
+<text x="1813" y="335" class="body">Google Drive</text>
+<text x="1813" y="359" class="tiny">drive.google.com/uc?export=download&amp;id=…</text>
+<rect x="1790" y="405" width="335" height="165" rx="12" class="card"/>
+<text x="1813" y="442" class="h">YouTube</text>
+<text x="1813" y="473" class="body">YouTube Data API v3</text>
+<text x="1813" y="501" class="small">Playlist metadata / paginación</text>
+<text x="1813" y="529" class="body">YouTube IFrame player</text>
+<text x="1813" y="553" class="tiny">Reproducción; acceso/embedding puede restringir.</text>
+<rect x="1790" y="600" width="335" height="165" rx="12" class="card"/>
+<text x="1813" y="637" class="h">Pixabay</text>
+<text x="1813" y="669" class="body">Pixabay Videos API</text>
+<text x="1813" y="697" class="small">Respuesta con variantes de video</text>
+<text x="1813" y="725" class="body">URL HTTPS MP4</text>
+<text x="1813" y="749" class="tiny">La URL se reproduce con VideoPlayer.</text>
+<rect x="1790" y="795" width="335" height="165" rx="12" class="card"/>
+<text x="1813" y="832" class="h">Vimeo</text>
+<text x="1813" y="864" class="body">vimeo.com/api/oembed.json</text>
+<text x="1813" y="892" class="small">Metadatos de la URL pública</text>
+<text x="1813" y="920" class="body">Vimeo embed · WebView</text>
+<text x="1813" y="944" class="tiny">Privacidad/embedding condiciona reproducción.</text>
+
+<!-- flow paths: UI -> provider -> repository -->
+<path d="M425 322 H520" class="call"/><text x="438" y="307" class="edge">watch / retry</text>
+<path d="M810 430 H905" class="call"/><text x="820" y="414" class="edge">getVideoPosts()</text>
+<path d="M905 335 H850 V292 H425" class="result"/><text x="593" y="277" class="edge">Videos + estado · notifyListeners</text>
+<!-- source registration / dependency contract -->
+<path d="M1210 507 H1250 V290 H1300" class="dep"/>
+<path d="M1250 507 V485 H1300" class="dep"/>
+<path d="M1250 507 V680 H1300" class="dep"/>
+<path d="M1250 507 V875 H1300" class="dep"/>
+<text x="1260" y="191" class="tiny">implementa contrato</text>
+<!-- repository calls sources (concurrent fanout bar) -->
+<path d="M1300 1010 H1247 V292" class="call"/>
+<path d="M1247 485 H1300" class="call"/>
+<path d="M1247 680 H1300" class="call"/>
+<path d="M1247 875 H1300" class="call"/>
+<path d="M1247 292 H1300" class="call"/>
+<text x="1218" y="1034" class="tiny">invoca fuentes concurrentemente</text>
+<!-- source result return rail, distinct from dependency edges -->
+<path d="M1300 350 H1255" class="result"/>
+<path d="M1300 545 H1255" class="result"/>
+<path d="M1300 740 H1255" class="result"/>
+<path d="M1300 935 H1255" class="result"/>
+<path d="M1255 350 V1030 H1300" class="result"/>
+<text x="1268" y="1002" class="tiny" transform="rotate(-90 1268 1002)">List&lt;VideoPost&gt; / falla</text>
+<!-- data provenance arrows -->
+<path d="M1700 292 H1790" class="result"/>
+<path d="M1700 487 H1790" class="call"/>
+<path d="M1700 682 H1790" class="call"/>
+<path d="M1700 877 H1790" class="call"/>
+<text x="1715" y="275" class="tiny">lee videoUrl</text>
+<text x="1715" y="470" class="tiny">HTTPS API</text>
+<text x="1715" y="665" class="tiny">HTTPS API</text>
+<text x="1715" y="860" class="tiny">HTTPS oEmbed</text>
+<!-- implementation satisfies repository contract; repository assembles common entities -->
+<path d="M1300 990 H1260 V323 H1210" class="dep"/>
+<path d="M1300 1018 H1230 V754 H1210" class="result"/>
+<!-- player relation -->
+<path d="M425 710 H455 V918 H425" class="thin" marker-end="url(#a)"/>
+
+<!-- footer notes -->
+<rect x="45" y="1090" width="2110" height="295" rx="16" fill="#fff" stroke="#d5dfe8" stroke-width="1.5"/>
+<text x="72" y="1130" class="h">Procesamiento de resultados y avisos de configuración</text>
+<text x="72" y="1165" class="body">Repository: Future.wait de DataSources → intercalado por índice → deduplicación por ID (se conserva la primera aparición) → Provider.</text>
+<text x="72" y="1193" class="body">Fallo parcial: guarda diagnostic y conserva éxitos. Si todos fallan y no hay videos, lanza VideoDataSourcesException; el reintento es una nueva llamada desde UI.</text>
+<text x="72" y="1221" class="body">Credenciales requeridas: YOUTUBE_API_KEY + YOUTUBE_PLAYLIST_ID; PIXABAY_API_KEY. VIMEO_VIDEO_URLS es opcional; no aparece en las variables configuradas observadas.</text>
+<text x="72" y="1249" class="body">InstagramVideoDataSource existe pero no está registrado: es un placeholder que lanza UnconfiguredVideoDataSourceException y no hace solicitudes.</text>
+<text x="72" y="1277" class="body">Nota: “Local” describe el origen de los metadatos; los archivos de video se sirven desde URLs remotas de Google Drive, no desde almacenamiento local del dispositivo.</text>
+<line x1="75" y1="1333" x2="135" y2="1333" class="call"/><text x="148" y="1338" class="small">Llamada / solicitud de datos</text>
+<line x1="435" y1="1333" x2="495" y2="1333" class="result"/><text x="508" y="1338" class="small">Resultado / metadatos</text>
+<line x1="790" y1="1333" x2="850" y2="1333" class="dep"/><text x="863" y="1338" class="small">Dependencia / implementa interfaz</text>
+<text x="1300" y="1338" class="small">Trazabilidad: main.dart · DiscoverProvider · VideoPostRepositoryImpl · VideoPostDataSource</text>
+</svg>
