@@ -2,44 +2,32 @@ import 'package:flutter/material.dart';
 
 class MyMessageBubble extends StatelessWidget {
   final String text;
-  final DateTime sentAt;
 
-  const MyMessageBubble({super.key, required this.text, required this.sentAt});
+  const MyMessageBubble({
+    super.key,
+    this.text = 'Hija de tu pinche madre',
+  });
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Flexible(
-            child: Container(
-              decoration: BoxDecoration(
-                color: colors.primary,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(text, style: TextStyle(color: colors.onPrimary)),
-                  const SizedBox(height: 3),
-                  Text(
-                    TimeOfDay.fromDateTime(sentAt).format(context),
-                    style: TextStyle(
-                      color: colors.onPrimary.withValues(alpha: 0.7),
-                      fontSize: 11,
-                    ),
-                  ),
-                ],
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+              color: colors.primary, borderRadius: BorderRadius.circular(20)),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Text(
+              text,
+              style: const TextStyle(color: Colors.white),
             ),
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 10)
+      ],
     );
   }
 }

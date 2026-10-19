@@ -1,16 +1,16 @@
-# Práctica 03 · Yes No App 👽
+# flutter_yes_no_app_230318
 
-## Descripción
+A new Flutter project.
 
-**Yes No App** es una aplicación de chat desarrollada en Flutter. Cuando el usuario envía una pregunta que termina en `?`, el sistema responde *Sí*, *No* o *Tal vez*. La elección se realiza de manera local con una distribución probabilística de **40 % Sí**, **40 % No** y **20 % Tal vez**. Además, la aplicación consulta la API externa de [yesno.wtf](https://yesno.wtf/) para obtener y mostrar un GIF animado correspondiente a la respuesta obtenida.
+## Getting Started
 
----
+This project is a starting point for a Flutter application.
 
-## Objetivos de la práctica
+A few resources to get you started if this is your first Flutter project:
 
-- Crear e integrar un **ícono personalizado** que se muestre en la pantalla de inicio del dispositivo al abrir la aplicación.
-- Implementar la lógica de respuestas probabilísticas (**40 % Sí**, **40 % No**, **20 % Tal vez**) acompañadas de sus respectivos GIFs.
-- Diseñar burbujas de chat con estilo tipo WhatsApp que incluyan la **hora exacta de envío** de cada mensaje.
+- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
+- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
+- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
 
 ---
 

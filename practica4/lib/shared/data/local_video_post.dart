@@ -1,0 +1,58 @@
+List<Map<String, dynamic>> videoPosts = [
+  {
+    'id': 'drive:11uY8ceTrZKlM5A2Xg02wwWS4dXPVuyJO',
+    'name': 'Video 2',
+    'videoUrl': 'https://drive.google.com/uc?export=download&id=11uY8ceTrZKlM5A2Xg02wwWS4dXPVuyJO',
+    'likes': 24230,
+    'views': 1343,
+  },
+  {
+    'id': 'drive:1eh_MIt-hXIEtdOgDB51e5EOyooe5XyF4',
+    'name': 'Video 3',
+    'videoUrl': 'https://drive.google.com/uc?export=download&id=1eh_MIt-hXIEtdOgDB51e5EOyooe5XyF4',
+    'likes': 21564320,
+    'views': 123563,
+  },
+  {
+    'id': 'drive:1RqFpor5IYaTPYZDcu_zipJsQ9oG7oFk7',
+    'name': 'Video 4',
+    'videoUrl': 'https://drive.google.com/uc?export=download&id=1RqFpor5IYaTPYZDcu_zipJsQ9oG7oFk7',
+    'likes': 320,
+    'views': 2300,
+  },
+  {
+    'id': 'drive:1Vx2PUd3NBlIZl05ECAfxTV_a3Nnsy4KB',
+    'name': 'Video 5',
+    'videoUrl': 'https://drive.google.com/uc?export=download&id=1Vx2PUd3NBlIZl05ECAfxTV_a3Nnsy4KB',
+    'likes': 3230,
+    'views': 31030,
+  },
+  {
+    'id': 'drive:1AWVDL1IDezY121M2Wtv62exKMdxE1wOR',
+    'name': 'Video 6',
+    'videoUrl': 'https://drive.google.com/uc?export=download&id=1AWVDL1IDezY121M2Wtv62exKMdxE1wOR',
+    'likes': 10,
+    'views': 330,
+  },
+  {
+    'id': 'drive:1amXzaIbCTM0dA5cbtsIAsBhNLllFRmLo',
+    'name': 'Video 7',
+    'videoUrl': 'https://drive.google.com/uc?export=download&id=1amXzaIbCTM0dA5cbtsIAsBhNLllFRmLo',
+    'likes': 1320,
+    'views': 33032,
+  },
+  {
+    'id': 'drive:1dvEICe1e_g8P8g7fHEfUWJ7el16H50yk',
+    'name': 'Video 8',
+    'videoUrl': 'https://drive.google.com/uc?export=download&id=1dvEICe1e_g8P8g7fHEfUWJ7el16H50yk',
+    'likes': 342,
+    'views': 3332,
+  },
+  {
+    'id': 'drive:1nZS5lut0aAITlrkWMpaBTRrYpp11pFSw',
+    'name': 'Video 9',
+    'videoUrl': 'https://drive.google.com/uc?export=download&id=1nZS5lut0aAITlrkWMpaBTRrYpp11pFSw',
+    'likes': 450,
+    'views': 1200,
+  },
+];
