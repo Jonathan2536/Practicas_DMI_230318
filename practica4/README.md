@@ -34,9 +34,13 @@ que los metadatos Local usan URLs remotas, no archivos guardados en el teléfono
 
 ![Arquitectura del Provider local y persistencia](Diagrama%20de%20arquitectura%20local/architecture.png)
 
+[Ver diagrama interactivo de arquitectura local en GitHub Pages](https://jonathan2536.github.io/Practicas_DMI_230318/practica4/Diagrama%20de%20arquitectura%20local/architecture.html)
+
 **Provider, repositorio y DataSources**
 
 ![Arquitectura del Provider con repositorio y DataSources](Diagrama%20con%20Repository%20y%20DataSources/architecture.png)
+
+[Ver diagrama interactivo en GitHub Pages](https://jonathan2536.github.io/Practicas_DMI_230318/practica4/Diagrama%20con%20Repository%20y%20DataSources/architecture.html)
 
 ## 4. Tecnologías y ejecución
 
