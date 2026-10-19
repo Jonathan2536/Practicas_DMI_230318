@@ -83,21 +83,29 @@ pendientes: no se crean ni se enlazan imágenes que todavía no existen.
 
 ### Interfaz y funcionalidades
 
-- Pantalla inicial: ![](/practica4/docs/01-pantalla-inicial.png.png)
-- Discover y reproducción:![](/practica4/docs/02-discover-video.png.png)
-- For You y Favorites: ![](/practica4/docs/03-for-you-favorites.png.png)
-- Likes: ![](/practica4/docs/04-sonido-likes.png.png)
-- Muteo: ![](/practica4/docs/sonidomuteo.png)
-- Descripción expandida: ![](/practica4/docs/05-descripcion-expandida.png.png)
-
-
+<table>
+  <tr>
+    <td align="center">Pantalla inicial<br><img src="docs/01-pantalla-inicial.png.png" alt="Pantalla inicial" width="180"></td>
+    <td align="center">Discover y reproducción<br><img src="docs/02-discover-video.png.png" alt="Discover y reproducción" width="180"></td>
+    <td align="center">For You y Favorites<br><img src="docs/03-for-you-favorites.png.png" alt="For You y Favorites" width="180"></td>
+    <td align="center">Likes<br><img src="docs/04-sonido-likes.png.png" alt="Likes" width="180"></td>
+  </tr>
+  <tr>
+    <td align="center">Muteo<br><img src="docs/sonidomuteo.png" alt="Muteo" width="180"></td>
+    <td align="center">Descripción expandida<br><img src="docs/05-descripcion-expandida.png.png" alt="Descripción expandida" width="180"></td>
+  </tr>
+</table>
 
 ### Temas estacionales
 
-- Normal: ![](/practica4/docs/06-tema-normal.png.png)
-- Halloween: ![](/practica4/docs/07-tema-halloween.png.jpg)
-- Christmas: ![](/practica4/docs/08-tema-christmas.png.jpg)
-- Valentine's Day y selector manual: ![](/practica4/docs/09-tema-valentines-selector.png.jpg)
+<table>
+  <tr>
+    <td align="center">Normal<br><img src="docs/06-tema-normal.png.png" alt="Tema Normal" width="180"></td>
+    <td align="center">Halloween<br><img src="docs/07-tema-halloween.png.jpg" alt="Tema Halloween" width="180"></td>
+    <td align="center">Christmas<br><img src="docs/08-tema-christmas.png.jpg" alt="Tema Christmas" width="180"></td>
+    <td align="center">Valentine's Day y selector manual<br><img src="docs/09-tema-valentines-selector.png.jpg" alt="Tema Valentine's Day y selector manual" width="180"></td>
+  </tr>
+</table>
 
 <!-- Pendiente: agregar docs/evidencias/06-tema-normal.png -->
 <!-- Pendiente: agregar docs/evidencias/07-tema-halloween.png -->
@@ -106,12 +114,13 @@ pendientes: no se crean ni se enlazan imágenes que todavía no existen.
 
 ### Pruebas en Appetize
 
-- Primera configuración de dispositivo virtual:
-  ![](/practica4/docs/10-appetize-configuracion-1.png.png)
-- Segunda configuración de dispositivo virtual:
-  ![](/practica4/docs/11-appetize-configuracion-2.png.png)
-- Panel de publicación o enlace real:
-  ![](/practica4/docs/12-panel-publicacion-appetize.png.png)
+<table>
+  <tr>
+    <td align="center">Primera configuración de dispositivo virtual<br><img src="docs/10-appetize-configuracion-1.png.png" alt="Primera configuración de dispositivo virtual" width="180"></td>
+    <td align="center">Segunda configuración de dispositivo virtual<br><img src="docs/11-appetize-configuracion-2.png.png" alt="Segunda configuración de dispositivo virtual" width="180"></td>
+    <td align="center">Panel de publicación o enlace real<br><img src="docs/12-panel-publicacion-appetize.png.png" alt="Panel de publicación o enlace real" width="180"></td>
+  </tr>
+</table>
 
 <!-- Pendiente: agregar docs/evidencias/10-appetize-configuracion-1.png -->
 <!-- Pendiente: agregar docs/evidencias/11-appetize-configuracion-2.png -->
@@ -119,8 +128,11 @@ pendientes: no se crean ni se enlazan imágenes que todavía no existen.
 
 ### Validación y GitHub
 
-- Resultados de `flutter analyze` y `flutter test`:
-  ![](/practica4/docs/13-resultados-pruebas.png.png).
+<table>
+  <tr>
+    <td align="center">Resultados de <code>flutter analyze</code> y <code>flutter test</code><br><img src="docs/13-resultados-pruebas.png.png" alt="Resultados de flutter analyze y flutter test" width="180"></td>
+  </tr>
+</table>
 
 <!-- Pendiente: agregar docs/evidencias/13-resultados-pruebas.png -->
 <!-- Pendiente: agregar docs/evidencias/14-integracion-rama.png -->
