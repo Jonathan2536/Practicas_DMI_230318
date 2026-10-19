@@ -74,11 +74,9 @@ Estos resultados no verifican por sí solos la reproducción en un dispositivo.
 
 ## 5. Publicación en Appetize
 
-Compila el APK release, súbelo a Appetize.io y pruébalo en dos configuraciones
-de dispositivo virtual. Añade aquí el enlace permanente real cuando la
-publicación y su ejecución se hayan comprobado.
+Puedes abrir y probar la aplicación TokTik en Appetize desde este enlace:
 
-**Enlace de la aplicación:** PENDIENTE DE AGREGAR EL ENLACE REAL DE APPETIZE.
+[Abrir TokTik en Appetize](https://appetize.io/app/b_ko3ugglb75236uk7lyxshccac4)
 
 ## 6. Evidencias de la aplicación
 
