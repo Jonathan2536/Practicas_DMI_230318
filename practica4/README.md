@@ -83,24 +83,21 @@ pendientes: no se crean ni se enlazan imágenes que todavía no existen.
 
 ### Interfaz y funcionalidades
 
-- Pantalla inicial: `docs/evidencias/01-pantalla-inicial.png`.
-- Discover y reproducción: `docs/evidencias/02-discover-video.png`.
-- For You y Favorites: `docs/evidencias/03-for-you-favorites.png`.
-- Control de sonido y likes: `docs/evidencias/04-sonido-likes.png`.
-- Descripción expandida: `docs/evidencias/05-descripcion-expandida.png`.
+- Pantalla inicial: ![](/practica4/docs/01-pantalla-inicial.png.png)
+- Discover y reproducción:![](/practica4/docs/02-discover-video.png.png)
+- For You y Favorites: ![](/practica4/docs/03-for-you-favorites.png.png)
+- Likes: ![](/practica4/docs/04-sonido-likes.png.png)
+- Muteo: ![](/practica4/docs/sonidomuteo.png)
+- Descripción expandida: ![](/practica4/docs/05-descripcion-expandida.png.png)
 
-<!-- Pendiente: agregar docs/evidencias/01-pantalla-inicial.png -->
-<!-- Pendiente: agregar docs/evidencias/02-discover-video.png -->
-<!-- Pendiente: agregar docs/evidencias/03-for-you-favorites.png -->
-<!-- Pendiente: agregar docs/evidencias/04-sonido-likes.png -->
-<!-- Pendiente: agregar docs/evidencias/05-descripcion-expandida.png -->
+
 
 ### Temas estacionales
 
-- Normal: `docs/evidencias/06-tema-normal.png`.
-- Halloween: `docs/evidencias/07-tema-halloween.png`.
-- Christmas: `docs/evidencias/08-tema-christmas.png`.
-- Valentine's Day y selector manual: `docs/evidencias/09-tema-valentines-selector.png`.
+- Normal: ![](/practica4/docs/06-tema-normal.png.png)
+- Halloween: ![](/practica4/docs/07-tema-halloween.png.jpg)
+- Christmas: ![](/practica4/docs/08-tema-christmas.png.jpg)
+- Valentine's Day y selector manual: ![](/practica4/docs/09-tema-valentines-selector.png.jpg)
 
 <!-- Pendiente: agregar docs/evidencias/06-tema-normal.png -->
 <!-- Pendiente: agregar docs/evidencias/07-tema-halloween.png -->
@@ -110,11 +107,11 @@ pendientes: no se crean ni se enlazan imágenes que todavía no existen.
 ### Pruebas en Appetize
 
 - Primera configuración de dispositivo virtual:
-  `docs/evidencias/10-appetize-configuracion-1.png`.
+  ![](/practica4/docs/10-appetize-configuracion-1.png.png)
 - Segunda configuración de dispositivo virtual:
-  `docs/evidencias/11-appetize-configuracion-2.png`.
+  ![](/practica4/docs/11-appetize-configuracion-2.png.png)
 - Panel de publicación o enlace real:
-  `docs/evidencias/12-panel-publicacion-appetize.png`.
+  ![](/practica4/docs/12-panel-publicacion-appetize.png.png)
 
 <!-- Pendiente: agregar docs/evidencias/10-appetize-configuracion-1.png -->
 <!-- Pendiente: agregar docs/evidencias/11-appetize-configuracion-2.png -->
@@ -123,9 +120,7 @@ pendientes: no se crean ni se enlazan imágenes que todavía no existen.
 ### Validación y GitHub
 
 - Resultados de `flutter analyze` y `flutter test`:
-  `docs/evidencias/13-resultados-pruebas.png`.
-- Integración de la rama, cuando se haya realizado:
-  `docs/evidencias/14-integracion-rama.png`.
+  ![](/practica4/docs/13-resultados-pruebas.png.png).
 
 <!-- Pendiente: agregar docs/evidencias/13-resultados-pruebas.png -->
 <!-- Pendiente: agregar docs/evidencias/14-integracion-rama.png -->
