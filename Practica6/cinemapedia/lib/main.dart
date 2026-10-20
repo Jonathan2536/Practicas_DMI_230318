@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cinemapedia/router/app_router.dart';
 
 void main() {
   runApp(const MainApp());
@@ -9,13 +10,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+      initialRoute: '/',
+      onGenerateRoute: appRouter,
     );
   }
 }

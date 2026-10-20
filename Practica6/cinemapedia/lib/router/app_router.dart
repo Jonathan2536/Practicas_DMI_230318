@@ -1,14 +1,17 @@
+import 'package:flutter/material.dart';
 import 'package:cinemapedia/presentation/screens/screens.dart';
-import 'package:cinemapedia/router/go_router.dart';
 
-final appRouter = GoRouter{
-  initialLocation: '/',
-  router: [
-
-    GoRouter{
-    path: '/',
-    name: HomeScreen.name,
-    builder: (context, state) => const HomeScreen(),
-    }
-  ]
+Route<dynamic> appRouter(RouteSettings settings) {
+  switch (settings.name) {
+    case '/':
+      return MaterialPageRoute<void>(
+        settings: settings,
+        builder: (_) => const HomeScreen(),
+      );
+    default:
+      return MaterialPageRoute<void>(
+        settings: settings,
+        builder: (_) => const HomeScreen(),
+      );
+  }
 }
