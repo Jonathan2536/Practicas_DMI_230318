@@ -1,4 +1,5 @@
 import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/infrastructure/models/moviedb/movie_details.dart';
 import 'package:cinemapedia/infrastructure/models/moviedb/movie_moviedb.dart';
 
 class MovieMapper {
@@ -21,5 +22,26 @@ class MovieMapper {
       video: moviedb.video,
       voteAverage: moviedb.voteAverage,
       voteCount: moviedb.voteCount
+    );
+
+  static Movie movieDetailsToEntity(MovieDetails details) => Movie(
+      adult: details.adult,
+      backdropPath: details.backdropPath.isNotEmpty
+          ? 'https://image.tmdb.org/t/p/w500${details.backdropPath}'
+          : 'https://sd.keepcalms.com/i-w600/keep-calm-poster-not-found.jpg',
+      genreIds: details.genres.map((genre) => genre.id.toString()).toList(),
+      id: details.id,
+      originalLanguage: details.originalLanguage,
+      originalTitle: details.originalTitle,
+      overview: details.overview,
+      popularity: details.popularity,
+      posterPath: details.posterPath.isNotEmpty
+          ? 'https://image.tmdb.org/t/p/w500${details.posterPath}'
+          : 'no-poster',
+      releaseDate: details.releaseDate,
+      title: details.title,
+      video: details.video,
+      voteAverage: details.voteAverage,
+      voteCount: details.voteCount,
     );
 }

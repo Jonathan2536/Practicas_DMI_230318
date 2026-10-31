@@ -8,14 +8,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:cinemapedia/main.dart';
+import 'package:cinemapedia/presentation/screens/movies/home_screen.dart';
 
 void main() {
-  testWidgets('la pantalla inicial muestra el placeholder', (
+  testWidgets('la pantalla de categorías muestra la navegación', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(const MainApp());
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen(pageIndex: 1)));
 
-    expect(find.byType(Placeholder), findsOneWidget);
+    expect(find.text('Categorías próximamente'), findsOneWidget);
+    expect(find.byType(BottomNavigationBar), findsOneWidget);
   });
 }

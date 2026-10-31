@@ -10,7 +10,7 @@ final appRouter = GoRouter(
       path: '/home/:page',
       name: HomeScreen.name,
       builder: (context, state) {
-        final pageIndex = int.parse( state.params['page'] ?? '0' );
+        final pageIndex = int.tryParse(state.pathParameters['page'] ?? '') ?? 0;
 
         return HomeScreen( pageIndex: pageIndex );
       },
@@ -19,7 +19,7 @@ final appRouter = GoRouter(
           path: 'movie/:id',
           name: MovieScreen.name,
           builder: (context, state) {
-            final movieId = state.params['id'] ?? 'no-id';
+            final movieId = state.pathParameters['id'] ?? 'no-id';
 
             return MovieScreen( movieId: movieId );
           },
@@ -31,7 +31,7 @@ final appRouter = GoRouter(
 
     GoRoute(
       path: '/',
-      redirect: ( _ , __ ) => '/home/0',
+      redirect: (_, _) => '/home/0',
     ),
 
   ]

@@ -1,54 +1,28 @@
-import 'package:cinemapedia/presentation/providers/movies/movies_providers.dart';
+import 'package:cinemapedia/presentation/views/views.dart';
+import 'package:cinemapedia/presentation/widgets/shared/custom_bottom_navigation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-
 
 class HomeScreen extends StatelessWidget {
-
   static const name = 'home-screen';
 
-  const HomeScreen({super.key});
+  final int pageIndex;
+
+  const HomeScreen({super.key, required this.pageIndex});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: _HomeView()
-    );
-  }
-}
+    final selectedIndex = pageIndex >= 0 && pageIndex <= 2 ? pageIndex : 0;
+    final Widget page = switch (selectedIndex) {
+      1 => const Center(child: Text('Categorías próximamente')),
+      2 => const FavoritesView(),
+      _ => const HomeView(),
+    };
 
-class _HomeView extends ConsumerStatefulWidget {
-  const _HomeView();
-
-  @override
-  _HomeViewState createState() => _HomeViewState();
-}
-
-class _HomeViewState extends ConsumerState<_HomeView> {
-
-  @override
-  void initState() {
-    super.initState();
-    
-    ref.read( nowPlayingMoviesProvider.notifier ).loadNextPage();
-  }
-
-
-  @override
-  Widget build(BuildContext context) {
-
-    final nowPlayingMovies = ref.watch( nowPlayingMoviesProvider );
-
-
-    return ListView.builder(
-      itemCount: nowPlayingMovies.length,
-      itemBuilder: (context, index) {
-        final movie = nowPlayingMovies[index];
-        return ListTile(
-          title: Text( movie.title ),
-        );
-      },
+    return Scaffold(
+      body: page,
+      bottomNavigationBar: CustomBottomNavigation(
+        currentIndex: selectedIndex,
+      ),
     );
   }
 }
