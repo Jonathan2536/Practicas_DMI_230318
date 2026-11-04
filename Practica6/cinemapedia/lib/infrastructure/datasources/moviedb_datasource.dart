@@ -8,17 +8,18 @@ import 'package:cinemapedia/infrastructure/models/moviedb/moviedb_response.dart'
 import 'package:cinemapedia/infrastructure/models/moviedb/movie_details.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
 
-
 class MoviedbDatasource extends MoviesDatasource {
-
-  final dio = Dio(BaseOptions(
-    baseUrl: 'https://api.themoviedb.org/3',
-    queryParameters: {
-      'api_key': Environment.theMovieDbKey,
-      'language': 'es-MX'
-    }
-  ));
-
+  final dio = Dio(
+    BaseOptions(
+      baseUrl: 'https://api.themoviedb.org/3',
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 15),
+      queryParameters: {
+        'api_key': Environment.theMovieDbKey,
+        'language': 'es-MX',
+      },
+    ),
+  );
 
   @override
   Future<List<Movie>> getNowPlaying({int page = 1}) =>
@@ -59,10 +60,7 @@ class MoviedbDatasource extends MoviesDatasource {
       queryParameters['query'] = query;
     }
 
-    final response = await dio.get(
-      endpoint,
-      queryParameters: queryParameters,
-    );
+    final response = await dio.get(endpoint, queryParameters: queryParameters);
     final movieDBResponse = MovieDbResponse.fromJson(
       Map<String, dynamic>.from(response.data as Map),
     );

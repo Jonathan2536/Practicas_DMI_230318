@@ -2,6 +2,17 @@
 
 A new Flutter project.
 
+## Configuración
+
+Crea un archivo `.env` en esta carpeta con la clave de API de TMDB:
+
+```env
+THE_MOVIEDB_KEY=tu_clave_de_tmdb
+```
+
+La aplicación requiere este archivo para cargar el catálogo. No compartas ni
+subas tu clave a Git.
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
