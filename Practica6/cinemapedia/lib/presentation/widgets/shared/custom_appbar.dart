@@ -23,6 +23,11 @@ class CustomAppbar extends ConsumerWidget {
           width: double.infinity,
           child: Row(
             children: [
+              IconButton(
+                tooltip: 'Abrir menú',
+                onPressed: () => Scaffold.of(context).openDrawer(),
+                icon: const Icon(Icons.menu),
+              ),
               Icon(Icons.movie_outlined, color: colors.primary),
               const SizedBox(width: 5),
               Text('Cinemapedia', style: titleStyle),
@@ -37,9 +42,12 @@ class CustomAppbar extends ConsumerWidget {
                     context: context,
                     delegate: SearchMovieDelegate(
                       initialMovies: searchedMovies,
-                      searchMovies: ref
+                      searchMovies: (query) => ref
                           .read(searchedMoviesProvider.notifier)
-                          .searchMoviesByQuery,
+                          .searchMoviesByQuery(
+                            query,
+                            country: ref.read(selectedMovieCountryProvider),
+                          ),
                     ),
                   ).then((movie) {
                     if (movie == null || !context.mounted) return;

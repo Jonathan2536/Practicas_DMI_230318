@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="screen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#35D6C4"/>
+      <stop offset="1" stop-color="#2862F5"/>
+    </linearGradient>
+    <linearGradient id="clapper" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#FFB454"/>
+      <stop offset="1" stop-color="#FF6B6B"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="220" fill="#111827"/>
+  <circle cx="512" cy="512" r="385" fill="#1F2A44"/>
+  <path d="M259 390h506v328a48 48 0 0 1-48 48H307a48 48 0 0 1-48-48z"
+        fill="url(#screen)"/>
+  <path d="M242 315a42 42 0 0 1 42-42h456a42 42 0 0 1 42 42v82H242z"
+        fill="url(#clapper)"/>
+  <path d="m306 273 72 124h92l-72-124zm205 0 72 124h92l-72-124z"
+        fill="#111827" opacity=".9"/>
+  <circle cx="512" cy="555" r="89" fill="#111827" opacity=".9"/>
+  <path d="m512 486 20 45 49 5-37 32 11 48-43-25-43 25 11-48-37-32 49-5z"
+        fill="#fff"/>
+</svg>

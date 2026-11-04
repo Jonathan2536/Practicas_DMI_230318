@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/domain/entities/movie_country.dart';
 import 'package:cinemapedia/presentation/providers/movies/movies_providers.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -15,7 +16,7 @@ void main() {
   test('a failed request stops loading and can be retried', () async {
     final requestedPages = <int>[];
     final notifier = MoviesNotifier(
-      fetchMoreMovies: ({int page = 1}) async {
+      fetchMoreMovies: ({int page = 1, MovieCountry? country}) async {
         requestedPages.add(page);
         if (requestedPages.length == 1) {
           throw StateError('TMDB unavailable');
@@ -41,7 +42,8 @@ void main() {
   test('a request timeout stops the loading state', () async {
     final notifier = MoviesNotifier(
       requestTimeout: const Duration(milliseconds: 1),
-      fetchMoreMovies: ({int page = 1}) => Completer<List<Movie>>().future,
+      fetchMoreMovies: ({int page = 1, MovieCountry? country}) =>
+          Completer<List<Movie>>().future,
     );
 
     await notifier.loadNextPage();

@@ -1,7 +1,10 @@
 import 'package:cinemapedia/domain/entities/actor.dart';
 import 'package:cinemapedia/domain/entities/movie.dart';
+import 'package:cinemapedia/domain/entities/movie_country.dart';
 import 'package:cinemapedia/presentation/providers/actors/actors_by_movie_provider.dart';
+import 'package:cinemapedia/presentation/providers/filters/movie_country_provider.dart';
 import 'package:cinemapedia/presentation/providers/movies/movie_info_provider.dart';
+import 'package:cinemapedia/presentation/widgets/shared/rating_stars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,20 +23,28 @@ class _MovieScreenState extends ConsumerState<MovieScreen> {
   @override
   void initState() {
     super.initState();
-    ref.read(movieInfoProvider.notifier).loadMovie(widget.movieId);
-    ref.read(actorsByMovieProvider.notifier).loadActors(widget.movieId);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(movieInfoProvider.notifier).loadMovie(widget.movieId);
+      ref.read(actorsByMovieProvider.notifier).loadActors(widget.movieId);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final movie = ref.watch(movieInfoProvider)[widget.movieId];
     final actors = ref.watch(actorsByMovieProvider)[widget.movieId] ?? [];
+    final selectedCountry = ref.watch(selectedMovieCountryProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(movie?.title ?? 'Película')),
       body: movie == null
           ? const Center(child: CircularProgressIndicator())
-          : _MovieDetails(movie: movie, actors: actors),
+          : _MovieDetails(
+              movie: movie,
+              actors: actors,
+              selectedCountryCode: selectedCountry?.code,
+            ),
     );
   }
 }
@@ -41,8 +52,13 @@ class _MovieScreenState extends ConsumerState<MovieScreen> {
 class _MovieDetails extends StatelessWidget {
   final Movie movie;
   final List<Actor> actors;
+  final String? selectedCountryCode;
 
-  const _MovieDetails({required this.movie, required this.actors});
+  const _MovieDetails({
+    required this.movie,
+    required this.actors,
+    required this.selectedCountryCode,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +85,38 @@ class _MovieDetails extends StatelessWidget {
               children: [
                 Text(movie.title, style: textTheme.headlineSmall),
                 const SizedBox(height: 8),
-                Text('⭐ ${movie.voteAverage.toStringAsFixed(1)}'),
+                RatingStars(rating: movie.voteAverage),
                 const SizedBox(height: 16),
+                if (movie.productionCountries.isNotEmpty) ...[
+                  Text('País y clasificación', style: textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (final country in movie.productionCountries)
+                        Chip(
+                          avatar: Text(MovieCountry.flagForCode(country.code)),
+                          label: Text(
+                            '${country.name}: '
+                            '${movie.countryCertifications[country.code]?.isNotEmpty == true ? movie.countryCertifications[country.code] : 'Sin clasificación'}',
+                          ),
+                        ),
+                    ],
+                  ),
+                  if (selectedCountryCode != null &&
+                      !movie.productionCountries.any(
+                        (country) => country.code == selectedCountryCode,
+                      ))
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        'No hay clasificación disponible para '
+                        '${_countryName(selectedCountryCode!)}.',
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+                ],
                 Text(
                   movie.overview.isEmpty
                       ? 'Sinopsis no disponible.'
@@ -128,5 +174,12 @@ class _MovieDetails extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _countryName(String code) {
+    for (final country in MovieCountry.supported) {
+      if (country.code == code) return country.name;
+    }
+    return code;
   }
 }

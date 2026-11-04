@@ -1,4 +1,3 @@
-
 class Movie {
   final bool adult;
   final String backdropPath;
@@ -14,6 +13,8 @@ class Movie {
   final bool video;
   final double voteAverage;
   final int voteCount;
+  final List<MovieProductionCountry> productionCountries;
+  final Map<String, String> countryCertifications;
 
   Movie({
     required this.adult,
@@ -29,6 +30,15 @@ class Movie {
     required this.title,
     required this.video,
     required this.voteAverage,
-    required this.voteCount
+    required this.voteCount,
+    this.productionCountries = const [],
+    this.countryCertifications = const {},
   });
+}
+
+class MovieProductionCountry {
+  final String code;
+  final String name;
+
+  const MovieProductionCountry({required this.code, required this.name});
 }
