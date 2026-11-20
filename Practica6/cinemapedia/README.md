@@ -138,10 +138,7 @@ Capturas de la aplicación ubicadas en `lib/Assets/`.
       <img src="lib/Assets/flutteranalyze.png" alt="Resultado de flutter analyze" width="240" />
       <img src="lib/Assets/fluttertest.png" alt="Resultado de flutter test" width="240" />
     </td>
-    <td align="center">
-      Publicación o enlace de Appetize<br>
-      <em>Pendiente de enlace</em>
-    </td>
+    
   </tr>
 </table>
 
