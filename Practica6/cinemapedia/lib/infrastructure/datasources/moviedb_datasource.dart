@@ -137,7 +137,7 @@ class MoviedbDatasource extends MoviesDatasource {
     );
 
     return movieDBResponse.results
-        .where((movie) => movie.posterPath != 'no-poster')
+        .where((movie) => movie.posterPath.isNotEmpty)
         .map(MovieMapper.movieDBToEntity)
         .toList();
   }

@@ -12,7 +12,14 @@ class MoviePosterLink extends StatelessWidget {
       onTap: () => context.push('/home/0/movie/${movie.id}'),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(20),
-        child: Image.network(movie.posterPath),
+        child: Image.network(
+          movie.posterPath,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => const SizedBox(
+            height: 280,
+            child: Center(child: Icon(Icons.movie_outlined, size: 64)),
+          ),
+        ),
       ),
     );
   }

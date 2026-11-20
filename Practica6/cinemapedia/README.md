@@ -98,22 +98,34 @@ publique un build, agrega aquí el enlace:
 
 ## 6. Evidencias de la aplicación
 
-Agrega capturas reales en `docs/evidencias/` y sustituye los espacios de esta
-sección por las imágenes correspondientes. Las capturas y rutas siguientes
-están pendientes; no se enlazan archivos que todavía no existen.
+Capturas de la aplicación ubicadas en `lib/Assets/`.
 
 ### Interfaz y funcionalidades
 
 <table>
-  <tr>
-    <td align="center">Inicio y carrusel<br><em>Pendiente: docs/evidencias/01-inicio-carrusel.png</em></td>
-    <td align="center">Menú y filtro por país<br><em>Pendiente: docs/evidencias/02-menu-filtro-pais.png</em></td>
-    <td align="center">Búsqueda<br><em>Pendiente: docs/evidencias/03-busqueda.png</em></td>
+  <tr>++++
+    <td align="center">
+      Inicio y carrusel<br>
+      <img src="lib/Assets/inicioo.jpg" alt="Inicio y carrusel" width="240" />
+    </td>
+    <td align="center">
+      Menú y filtro por país<br>
+      <img src="lib/Assets/menu.jpg" alt="Menú y filtro por país" width="240" />
+    </td>
+    <td align="center">
+      Búsqueda<br>
+      <img src="lib/Assets/busqueda.jpg" alt="Búsqueda" width="240" />
+    </td>
   </tr>
   <tr>
-    <td align="center">Detalle, estrellas y clasificación<br><em>Pendiente: docs/evidencias/04-detalle-pelicula.png</em></td>
-    <td align="center">Favoritos<br><em>Pendiente: docs/evidencias/05-favoritos.png</em></td>
-    <td align="center">Sección 15<br><em>Pendiente: docs/evidencias/06-seccion-15.png</em></td>
+    <td align="center">
+      Detalle, estrellas y clasificación<br>
+      <img src="lib/Assets/detalles.jpg" alt="Detalle de película" width="240" />
+    </td>
+    <td align="center">
+      Favoritos<br>
+      <img src="lib/Assets/favoritos.jpg" alt="Favoritos" width="240" />
+    </td>
   </tr>
 </table>
 
@@ -121,9 +133,15 @@ están pendientes; no se enlazan archivos que todavía no existen.
 
 <table>
   <tr>
-    <td align="center">Resultados de <code>flutter analyze</code> y <code>flutter test</code><br><em>Pendiente: docs/evidencias/07-resultados-pruebas.png</em></td>
-    <td align="center">Aplicación ejecutándose en dispositivo<br><em>Pendiente: docs/evidencias/08-ejecucion-dispositivo.png</em></td>
-    <td align="center">Publicación o enlace de Appetize<br><em>Pendiente: docs/evidencias/09-publicacion-appetize.png</em></td>
+    <td align="center">
+      Resultados de <code>flutter analyze</code> y <code>flutter test</code><br>
+      <img src="lib/Assets/flutteranalyze.png" alt="Resultado de flutter analyze" width="240" />
+      <img src="lib/Assets/fluttertest.png" alt="Resultado de flutter test" width="240" />
+    </td>
+    <td align="center">
+      Publicación o enlace de Appetize<br>
+      <em>Pendiente de enlace</em>
+    </td>
   </tr>
 </table>
 
